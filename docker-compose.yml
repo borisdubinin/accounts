@@ -14,35 +14,13 @@ services:
     volumes:
       - accounts_data:/var/lib/postgresql/data
 
-  postgres_cards:
-    image: postgres:15
-    container_name: postgres_cards
-    environment:
-      POSTGRES_DB: cardsdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - cards_data:/var/lib/postgresql/data
-
   accounts:
-    build: ./accounts
+    build: .
     container_name: accounts
     depends_on:
       - postgres_accounts
     ports:
       - "8081:8081"
 
-  cards:
-    build: ./cards
-    container_name: cards
-    depends_on:
-      - postgres_cards
-      - accounts
-    ports:
-      - "8080:8080"
-
 volumes:
   accounts_data:
-  cards_data:
