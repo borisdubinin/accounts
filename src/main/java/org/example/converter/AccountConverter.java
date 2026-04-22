@@ -1,5 +1,7 @@
 package org.example.converter;
 
+import org.example.dto.AccountRequestDto;
+import org.example.dto.AccountResponseDto;
 import org.example.entity.AccountEntity;
 import org.example.model.Account;
 import org.springframework.stereotype.Component;
@@ -30,9 +32,31 @@ public class AccountConverter {
         return model;
     }
 
+    public Account toModel(AccountRequestDto dto) {
+        Account model = new Account();
+        model.setBalance(dto.getBalance());
+        model.setCurrency(Optional.ofNullable(dto.getCurrency()).map(Currency::getInstance).orElse(null));
+        return model;
+    }
+
     public List<Account> toModels(List<AccountEntity> entities) {
         return entities.stream()
                 .map(this::toModel)
+                .toList();
+    }
+
+    public AccountResponseDto toDto(Account model) {
+        AccountResponseDto dto = new AccountResponseDto();
+        dto.setId(model.getId());
+        dto.setBalance(model.getBalance());
+        dto.setCurrency(Objects.toString(model.getCurrency(), null));
+        dto.setStatus(model.getStatus());
+        return dto;
+    }
+
+    public List<AccountResponseDto> toDtos(List<Account> models) {
+        return models.stream()
+                .map(this::toDto)
                 .toList();
     }
 }

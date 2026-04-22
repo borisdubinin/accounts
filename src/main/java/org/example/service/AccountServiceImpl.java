@@ -3,6 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.AccountConverter;
 import org.example.entity.AccountEntity;
+import org.example.entity.AccountStatus;
 import org.example.model.Account;
 import org.example.repository.AccountRepository;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     public Account create(Account account) {
+        account.setStatus(AccountStatus.ACTIVE);
         AccountEntity entity = accountConverter.toEntity(account);
         return accountConverter.toModel(accountRepository.save(entity));
     }
