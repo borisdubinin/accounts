@@ -13,6 +13,8 @@ services:
       - "5433:5432"
     volumes:
       - accounts_data:/var/lib/postgresql/data
+    networks:
+      - accounts_cards_network
 
   accounts:
     build: .
@@ -21,6 +23,12 @@ services:
       - postgres_accounts
     ports:
       - "8081:8081"
+    networks:
+      - accounts_cards_network
 
 volumes:
   accounts_data:
+
+networks:
+  accounts_cards_network:
+    external: true
