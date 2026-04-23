@@ -3,7 +3,7 @@ package org.example.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.AccountConverter;
-import org.example.dto.AccountRequestDto;
+import org.example.dto.CreateAccountRequestDto;
 import org.example.dto.AccountResponseDto;
 import org.example.model.Account;
 import org.example.service.AccountService;
@@ -22,8 +22,8 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountResponseDto create(@Valid @RequestBody AccountRequestDto accountRequestDto) {
-        Account account = accountConverter.toModel(accountRequestDto);
+    public AccountResponseDto create(@Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {
+        Account account = accountConverter.toModel(createAccountRequestDto);
         Account newAccount = accountService.create(account);
         return accountConverter.toDto(newAccount);
     }

@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException e) {
-        log.debug("Illegal argument was received: %s".formatted(e.getMessage()));
+        log.error("Illegal argument was received: %s".formatted(e.getMessage()));
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));

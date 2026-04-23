@@ -22,11 +22,13 @@ public class AccountServiceImpl implements AccountService {
     public Account create(Account account) {
         account.setStatus(AccountStatus.ACTIVE);
         AccountEntity entity = accountConverter.toEntity(account);
-        return accountConverter.toModel(accountRepository.save(entity));
+        AccountEntity newEntity = accountRepository.save(entity);
+        return accountConverter.toModel(newEntity);
     }
 
     @Transactional(readOnly = true)
     public List<Account> getAll() {
-        return accountConverter.toModels(accountRepository.findAll());
+        List<AccountEntity> accountEntities = accountRepository.findAll();
+        return accountConverter.toModels(accountEntities);
     }
 }

@@ -1,6 +1,6 @@
 package org.example.converter;
 
-import org.example.dto.AccountRequestDto;
+import org.example.dto.CreateAccountRequestDto;
 import org.example.dto.AccountResponseDto;
 import org.example.entity.AccountEntity;
 import org.example.model.Account;
@@ -27,15 +27,23 @@ public class AccountConverter {
         Account model = new Account();
         model.setId(entity.getId());
         model.setBalance(entity.getBalance());
-        model.setCurrency(Optional.ofNullable(entity.getCurrency()).map(Currency::getInstance).orElse(null));
+        try {
+            model.setCurrency(Optional.ofNullable(entity.getCurrency()).map(Currency::getInstance).orElse(null));
+        } catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(entity.getCurrency()));
+        }
         model.setStatus(entity.getStatus());
         return model;
     }
 
-    public Account toModel(AccountRequestDto dto) {
+    public Account toModel(CreateAccountRequestDto dto) {
         Account model = new Account();
         model.setBalance(dto.getBalance());
-        model.setCurrency(Optional.ofNullable(dto.getCurrency()).map(Currency::getInstance).orElse(null));
+        try {
+            model.setCurrency(Optional.ofNullable(dto.getCurrency()).map(Currency::getInstance).orElse(null));
+        } catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(dto.getCurrency()));
+        }
         return model;
     }
 

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class AccountRequestDto {
+public class CreateAccountRequestDto {
 
     @NotNull
     @PositiveOrZero
