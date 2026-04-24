@@ -26,6 +26,7 @@ public class AccountEntity {
     private Long id;
 
     private BigDecimal balance;
+
     private String currency;
 
     @Enumerated(EnumType.STRING)
