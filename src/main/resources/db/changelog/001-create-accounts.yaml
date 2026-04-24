@@ -19,10 +19,14 @@ databaseChangeLog:
               - column:
                   name: currency
                   type: VARCHAR(3)
+                  constraints:
+                    nullable: false
 
               - column:
                   name: status
                   type: VARCHAR(20)
+                  constraints:
+                    nullable: false
 
               - column:
                   name: created_at

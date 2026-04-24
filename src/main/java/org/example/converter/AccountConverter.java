@@ -18,7 +18,7 @@ public class AccountConverter {
         AccountEntity entity = new AccountEntity();
         entity.setId(model.getId());
         entity.setBalance(model.getBalance());
-        entity.setCurrency(Objects.toString(model.getCurrency(), null));
+        entity.setCurrency(model.getCurrency().toString());
         entity.setStatus(model.getStatus());
         return entity;
     }
@@ -28,7 +28,7 @@ public class AccountConverter {
         model.setId(entity.getId());
         model.setBalance(entity.getBalance());
         try {
-            model.setCurrency(Optional.ofNullable(entity.getCurrency()).map(Currency::getInstance).orElse(null));
+            model.setCurrency(Currency.getInstance(entity.getCurrency()));
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(entity.getCurrency()));
         }
@@ -40,7 +40,7 @@ public class AccountConverter {
         Account model = new Account();
         model.setBalance(dto.getBalance());
         try {
-            model.setCurrency(Optional.ofNullable(dto.getCurrency()).map(Currency::getInstance).orElse(null));
+            model.setCurrency(Currency.getInstance(dto.getCurrency()));
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(dto.getCurrency()));
         }
@@ -57,7 +57,7 @@ public class AccountConverter {
         AccountResponseDto dto = new AccountResponseDto();
         dto.setId(model.getId());
         dto.setBalance(model.getBalance());
-        dto.setCurrency(Objects.toString(model.getCurrency(), null));
+        dto.setCurrency(model.getCurrency().toString());
         dto.setStatus(model.getStatus());
         return dto;
     }
