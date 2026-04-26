@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+
+  postgres_accounts:
+    image: postgres:15
+    container_name: postgres_accounts
+    environment:
+      POSTGRES_DB: accountsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - accounts_data:/var/lib/postgresql/data
+    networks:
+      - accounts_cards_network
+
+  accounts:
+    build: .
+    container_name: accounts
+    depends_on:
+      - postgres_accounts
+    ports:
+      - "8081:8081"
+    networks:
+      - accounts_cards_network
+
+volumes:
+  accounts_data:
+
+networks:
+  accounts_cards_network:
+    external: true
