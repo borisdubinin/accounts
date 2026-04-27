@@ -1,5 +1,6 @@
 package org.example.exception;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,12 +15,20 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
+    @ApiResponse(
+            responseCode = "400",
+            description = "Illegal argument was encountered (example: incorrect currency ISO 4217 code)"
+    )
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException e) {
         log.error("Illegal argument encountered in the program: %s".formatted(e.getMessage()));
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ApiResponse(
+            responseCode = "400",
+            description = "Received request data didn't pass validation"
+    )
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException e) {
         log.error("Illegal argument was received: %s".formatted(e.getMessage()));
         Map<String, String> errors = new HashMap<>();

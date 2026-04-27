@@ -1,5 +1,6 @@
 package org.example.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -11,13 +12,24 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@Schema(description = "Request to create a new account")
 public class CreateAccountRequestDto {
 
-    @NotNull
-    @PositiveOrZero
+    @Schema(
+            description = "Initial account balance",
+            example = "1234.00",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    @NotNull(message = "Initial account balance is required")
+    @PositiveOrZero(message = "Balance cannot be less than 0")
     private BigDecimal balance;
 
-    @NotBlank
+    @Schema(
+            description = "Account currency (ISO 4217 code)",
+            examples = { "BYN", "RUB", "USD" },
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    @NotBlank(message = "Account currency is required")
     @Size(min = 3, max = 3)
     private String currency;
 }
