@@ -22,6 +22,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: scale
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
                   name: rate
                   type: DECIMAL(10, 4)
                   constraints:

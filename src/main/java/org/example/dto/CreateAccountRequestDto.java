@@ -26,7 +26,7 @@ public class CreateAccountRequestDto {
 
     @Schema(
             description = "Account currency (ISO 4217 code)",
-            examples = { "BYN", "RUB", "USD" },
+            allowableValues = { "BYN", "RUB", "USD", "EUR" },
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     @NotBlank(message = "Account currency is required")

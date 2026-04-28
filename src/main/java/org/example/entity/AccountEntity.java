@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.model.AccountCurrency;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,7 +28,8 @@ public class AccountEntity {
 
     private BigDecimal balance;
 
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private AccountCurrency currency;
 
     @Enumerated(EnumType.STRING)
     private AccountStatus status;

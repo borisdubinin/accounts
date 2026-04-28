@@ -1,12 +1,15 @@
 package org.example.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.model.AccountCurrency;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -25,7 +28,10 @@ public class CurrencyRateEntity {
 
     private LocalDate date;
 
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private AccountCurrency currency;
+
+    private Integer scale;
 
     private BigDecimal rate;
 

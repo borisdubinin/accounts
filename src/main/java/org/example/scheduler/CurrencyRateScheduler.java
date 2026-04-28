@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.client.NbrbClient;
 import org.example.converter.CurrencyRateConverter;
 import org.example.dto.CurrencyRateDto;
-import org.example.entity.CurrencyRateEntity;
-import org.example.repository.CurrencyRateRepository;
+import org.example.model.AccountCurrency;
+import org.example.model.CurrencyRate;
+import org.example.service.CurrencyRateService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -17,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class CurrencyRateScheduler {
 
-    private final CurrencyRateRepository currencyRateRepository;
+    private final CurrencyRateService currencyRateService;
     private final NbrbClient nbrbClient;
     private final CurrencyRateConverter currencyRateConverter;
 
@@ -26,10 +28,11 @@ public class CurrencyRateScheduler {
         log.info("Daily fetching currency rates started");
         List<CurrencyRateDto> currencyRateDtos = nbrbClient.getDailyRates(0)
                 .stream()
-                .filter(dto -> "USD".equals(dto.getCurAbbreviation())
-                        || "EUR".equals(dto.getCurAbbreviation()))
-                .toList();
-        List<CurrencyRateEntity> currencyRateEntities = currencyRateConverter.toEntities(currencyRateDtos);
-        currencyRateRepository.saveAll(currencyRateEntities);
+                .filter(dto ->
+                        Arrays.stream(AccountCurrency.values())
+                                .anyMatch(a -> a.toString().equals(dto.getCurAbbreviation()))
+                ).toList();
+        List<CurrencyRate> currencyRates = currencyRateConverter.toModels(currencyRateDtos);
+        currencyRateService.saveAll(currencyRates);
     }
 }

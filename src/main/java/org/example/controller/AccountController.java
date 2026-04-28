@@ -44,7 +44,6 @@ public class AccountController {
         return accountConverter.toDto(newAccount);
     }
 
-
     @Operation(
             summary = "Get all accounts",
             description = "Returns list of all accounts"

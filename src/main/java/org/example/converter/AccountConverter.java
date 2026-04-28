@@ -4,9 +4,9 @@ import org.example.dto.CreateAccountRequestDto;
 import org.example.dto.AccountResponseDto;
 import org.example.entity.AccountEntity;
 import org.example.model.Account;
+import org.example.model.AccountCurrency;
 import org.springframework.stereotype.Component;
 
-import java.util.Currency;
 import java.util.List;
 
 @Component
@@ -16,7 +16,7 @@ public class AccountConverter {
         AccountEntity entity = new AccountEntity();
         entity.setId(model.getId());
         entity.setBalance(model.getBalance());
-        entity.setCurrency(model.getCurrency().toString());
+        entity.setCurrency(model.getCurrency());
         entity.setStatus(model.getStatus());
         entity.setIban(model.getIban());
         return entity;
@@ -26,11 +26,7 @@ public class AccountConverter {
         Account model = new Account();
         model.setId(entity.getId());
         model.setBalance(entity.getBalance());
-        try {
-            model.setCurrency(Currency.getInstance(entity.getCurrency()));
-        } catch(IllegalArgumentException e) {
-            throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(entity.getCurrency()));
-        }
+        model.setCurrency(entity.getCurrency());
         model.setStatus(entity.getStatus());
         model.setIban(entity.getIban());
         return model;
@@ -40,9 +36,9 @@ public class AccountConverter {
         Account model = new Account();
         model.setBalance(dto.getBalance());
         try {
-            model.setCurrency(Currency.getInstance(dto.getCurrency()));
+            model.setCurrency(AccountCurrency.valueOf(dto.getCurrency()));
         } catch(IllegalArgumentException e) {
-            throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(dto.getCurrency()));
+            throw new IllegalArgumentException("%s isn't allowed currency ISO 4217 code".formatted(dto.getCurrency()));
         }
         return model;
     }
