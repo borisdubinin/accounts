@@ -6,8 +6,8 @@ import org.example.entity.AccountEntity;
 import org.example.entity.AccountStatus;
 import org.example.model.Account;
 import org.example.repository.AccountRepository;
+import org.example.util.IbanGenerator;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,15 +18,14 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountConverter accountConverter;
 
-    @Transactional
     public Account create(Account account) {
         account.setStatus(AccountStatus.ACTIVE);
+        account.setIban(IbanGenerator.generateIban());
         AccountEntity entity = accountConverter.toEntity(account);
         AccountEntity newEntity = accountRepository.save(entity);
         return accountConverter.toModel(newEntity);
     }
 
-    @Transactional(readOnly = true)
     public List<Account> getAll() {
         List<AccountEntity> accountEntities = accountRepository.findAll();
         return accountConverter.toModels(accountEntities);

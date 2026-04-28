@@ -15,4 +15,5 @@ public class Account {
     private BigDecimal balance;
     private Currency currency;
     private AccountStatus status;
+    private String iban;
 }

@@ -32,6 +32,8 @@ public class AccountEntity {
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
+    private String iban;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

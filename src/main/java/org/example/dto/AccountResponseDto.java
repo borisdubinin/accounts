@@ -23,4 +23,7 @@ public class AccountResponseDto {
 
     @Schema(description = "Current status of the account")
     private AccountStatus status;
+
+    @Schema(description = "IBAN of the account")
+    private String iban;
 }

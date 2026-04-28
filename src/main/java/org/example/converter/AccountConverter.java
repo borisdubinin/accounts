@@ -18,6 +18,7 @@ public class AccountConverter {
         entity.setBalance(model.getBalance());
         entity.setCurrency(model.getCurrency().toString());
         entity.setStatus(model.getStatus());
+        entity.setIban(model.getIban());
         return entity;
     }
 
@@ -31,6 +32,7 @@ public class AccountConverter {
             throw new IllegalArgumentException("%s isn't valid ISO 4217 code".formatted(entity.getCurrency()));
         }
         model.setStatus(entity.getStatus());
+        model.setIban(entity.getIban());
         return model;
     }
 
@@ -57,6 +59,7 @@ public class AccountConverter {
         dto.setBalance(model.getBalance());
         dto.setCurrency(model.getCurrency().toString());
         dto.setStatus(model.getStatus());
+        dto.setIban(model.getIban());
         return dto;
     }
 
