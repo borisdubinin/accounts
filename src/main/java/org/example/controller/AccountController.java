@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,21 @@ public class AccountController {
             summary = "Create new account",
             description = "Creates an account with the specified details"
     )
-    @ApiResponse(
-            responseCode = "201",
-            description = "Account was successfully created",
-            content = @Content(schema = @Schema(implementation = AccountResponseDto.class))
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Account was successfully created",
+                    content =
+                    @Content(schema = @Schema(implementation = AccountResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request. Possible reasons: " +
+                            "1) Incorrect currency ISO 4217 code; " +
+                            "2) Request data didn't pass validation; " +
+                            "3) Other request errors"
+            )
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AccountResponseDto create(@Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {

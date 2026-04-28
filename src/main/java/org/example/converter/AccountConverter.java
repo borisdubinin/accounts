@@ -53,7 +53,7 @@ public class AccountConverter {
         AccountResponseDto dto = new AccountResponseDto();
         dto.setId(model.getId());
         dto.setBalance(model.getBalance());
-        dto.setCurrency(model.getCurrency().toString());
+        dto.setCurrency(model.getCurrency());
         dto.setStatus(model.getStatus());
         dto.setIban(model.getIban());
         return dto;
