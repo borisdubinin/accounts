@@ -3,7 +3,6 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.CurrencyRateConverter;
 import org.example.entity.CurrencyRateEntity;
-import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
 import org.example.model.CurrencyRate;
 import org.example.repository.CurrencyRateRepository;
@@ -22,7 +21,7 @@ public class CurrencyRateServiceImpl implements CurrencyRateService{
     @Override
     public CurrencyRate getTodayRate(AccountCurrency currency) {
         CurrencyRateEntity entity = currencyRateRepository.getByCurrencyAndDate(currency, LocalDate.now())
-                .orElseThrow(() -> new EntityNotFoundException("Currency rate not found: %s".formatted(currency.toString())));
+                .orElseThrow(() -> new RuntimeException("Currency rate not found: %s".formatted(currency.toString())));
         return currencyRateConverter.toModel(entity);
     }
 

@@ -12,13 +12,13 @@ import java.math.BigDecimal;
 @Setter
 public class TransferRequestDto {
 
-    @NotBlank
+    @NotBlank(message = "IBAN is required to perform the transfer")
     private String ibanFrom;
 
-    @NotBlank
+    @NotBlank(message = "IBAN is required to perform the transfer")
     private String ibanTo;
 
-    @NotNull
-    @Positive
+    @NotNull(message = "Sent amount is required to perform the transfer")
+    @Positive(message = "Sent amount cannot be less or equals to 0")
     private BigDecimal sentAmount;
 }
