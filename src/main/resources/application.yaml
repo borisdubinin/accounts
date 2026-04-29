@@ -1,11 +1,11 @@
 server:
   port: 8081
 
-spring:
-  profiles:
-    active:
-      prod
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+
+national-bank-client:
+  url: https://api.nbrb.by
+  currency-rates-endpoint: /exrates/rates
