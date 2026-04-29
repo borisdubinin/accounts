@@ -9,23 +9,17 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CurrencyRateDto {
-
-    @JsonProperty("Cur_ID")
-    private Integer curId;
+public class CurrencyRateResponseDto {
 
     @JsonProperty("Date")
     private LocalDate date;
 
     @JsonProperty("Cur_Abbreviation")
-    private String curAbbreviation;
+    private String currency;
 
     @JsonProperty("Cur_Scale")
-    private Integer curScale;
-
-    @JsonProperty("Cur_Name")
-    private String curName;
+    private Integer scale;
 
     @JsonProperty("Cur_OfficialRate")
-    private BigDecimal curOfficialRate;
+    private BigDecimal rate;
 }
