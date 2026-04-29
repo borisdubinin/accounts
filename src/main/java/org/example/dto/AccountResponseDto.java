@@ -3,7 +3,7 @@ package org.example.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.entity.AccountStatus;
+import org.example.model.AccountStatus;
 import org.example.model.AccountCurrency;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ public class AccountResponseDto {
     @Schema(description = "Balance of the account", example = "1234.00")
     private BigDecimal balance;
 
-    @Schema(description = "Account currency (ISO 4217 code)")
+    @Schema(description = "Account currency (ISO 4217 code)", allowableValues = {"RUB", "BYN", "USD", "EUR"})
     private AccountCurrency currency;
 
     @Schema(description = "Current status of the account")
