@@ -1,6 +1,6 @@
 package org.example.converter;
 
-import org.example.dto.CurrencyRateDto;
+import org.example.dto.CurrencyRateResponseDto;
 import org.example.entity.CurrencyRateEntity;
 import org.example.model.AccountCurrency;
 import org.example.model.CurrencyRate;
@@ -35,20 +35,20 @@ public class CurrencyRateConverter {
         return model;
     }
 
-    public CurrencyRate toModel(CurrencyRateDto dto) {
+    public CurrencyRate toModel(CurrencyRateResponseDto dto) {
         CurrencyRate model = new CurrencyRate();
         model.setDate(dto.getDate());
         try {
-            model.setCurrency(AccountCurrency.valueOf(dto.getCurAbbreviation()));
+            model.setCurrency(AccountCurrency.valueOf(dto.getCurrency()));
         } catch(IllegalArgumentException e) {
-            throw new IllegalArgumentException("%s isn't allowed currency ISO 4217 code".formatted(dto.getCurAbbreviation()));
+            throw new IllegalArgumentException("%s isn't allowed currency ISO 4217 code".formatted(dto.getCurrency()));
         }
-        model.setScale(dto.getCurScale());
-        model.setRate(dto.getCurOfficialRate());
+        model.setScale(dto.getScale());
+        model.setRate(dto.getRate());
         return model;
     }
 
-    public List<CurrencyRate> toModels(List<CurrencyRateDto> dtos) {
+    public List<CurrencyRate> toModels(List<CurrencyRateResponseDto> dtos) {
         return dtos.stream()
                 .map(this::toModel)
                 .toList();
