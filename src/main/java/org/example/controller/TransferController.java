@@ -13,7 +13,6 @@ import org.example.dto.TransferRequestDto;
 import org.example.dto.TransferResponseDto;
 import org.example.model.Transfer;
 import org.example.service.TransferService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Transfers management", description = "API for transfers management")
@@ -27,28 +26,16 @@ public class TransferController {
 
     @Operation(
             summary = "Perform the transfer",
-            description = "Performs the transfer between specified accounts with specified amount"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Transfer was successfully performed",
-                    content = @Content(schema = @Schema(implementation = TransferResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Bad request. Possible reasons: " +
-                            "1) Transfer amount greater than account balance; " +
-                            "2) Request data didn't pass validation; " +
-                            "3) Other request errors"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Specified resource didn't found (example: non-existent IBAN of the account)"
-            )
-    })
+            description = "Performs the transfer between specified accounts with specified amount",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201", description = "Transfer was successfully performed",
+                            content = @Content(schema = @Schema(implementation = TransferResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "404", description =
+                            "Specified resource didn't found (example: non-existent IBAN of the account)")
+            })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public TransferResponseDto performTransfer(@Valid @RequestBody TransferRequestDto transferRequestDto) {
         Transfer transfer = transferConverter.toModel(transferRequestDto);
         Transfer performedTransfer = transferService.performTransfer(transfer);
