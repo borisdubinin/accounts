@@ -1,5 +1,6 @@
 package org.example.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,5 +37,6 @@ public class CurrencyRateEntity {
     private BigDecimal rate;
 
     @CreationTimestamp
-    private LocalDateTime created_at;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }
