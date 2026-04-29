@@ -8,6 +8,7 @@ import org.example.exception.EntityNotFoundException;
 import org.example.model.Account;
 import org.example.repository.AccountRepository;
 import org.example.util.IbanGenerator;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,5 +35,15 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> getAll() {
         List<AccountEntity> accountEntities = accountRepository.findAll();
         return accountConverter.toModels(accountEntities);
+    }
+
+    @Cacheable(value = "balance")
+    @Transactional(readOnly = true)
+    @Override
+    public Account getByIban(String iban) {
+        AccountEntity accountEntity = accountRepository.findByIban(iban)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Account not found with IBAN: %s".formatted(iban)));
+        return accountConverter.toModel(accountEntity);
     }
 }

@@ -9,3 +9,8 @@ server:
 national-bank-client:
   url: https://api.nbrb.by
   currency-rates-endpoint: /exrates/rates
+
+cache:
+  balance:
+    ttl: 30
+    maximum-size: 10_000

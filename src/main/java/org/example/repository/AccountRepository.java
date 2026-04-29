@@ -13,4 +13,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT a FROM AccountEntity a WHERE a.iban = :iban")
     Optional<AccountEntity> findByIbanWithLock(String iban);
+
+    Optional<AccountEntity> findByIban(String iban);
 }

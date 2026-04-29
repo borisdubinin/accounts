@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.AccountConverter;
-import org.example.dto.CreateAccountRequestDto;
-import org.example.dto.AccountResponseDto;
+import org.example.converter.BalanceConverter;
+import org.example.dto.*;
 import org.example.model.Account;
 import org.example.service.AccountService;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final AccountConverter accountConverter;
+    private final BalanceConverter balanceConverter;
 
     @Operation(
             summary = "Create new account",
@@ -54,5 +55,23 @@ public class AccountController {
     public List<AccountResponseDto> getAll() {
         List<Account> allAccounts = accountService.getAll();
         return accountConverter.toDtos(allAccounts);
+    }
+
+    @Operation(
+            summary = "Get balance",
+            description = "Returns balance and currency of the account",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Balance was successfully retrieved",
+                            content = @Content(schema = @Schema(implementation = GetBalanceResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "404", description =
+                            "Specified resource didn't found (example: non-existent IBAN of the account)")
+            })
+    @GetMapping("/balance")
+    public GetBalanceResponseDto getBalance(@Valid @RequestBody GetBalanceRequestDto getBalanceRequestDto) {
+        String iban = getBalanceRequestDto.getIban();
+        Account account = accountService.getByIban(iban);
+        return balanceConverter.toDto(account);
     }
 }

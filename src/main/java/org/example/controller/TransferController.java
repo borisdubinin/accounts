@@ -28,7 +28,7 @@ public class TransferController {
             description = "Performs the transfer between specified accounts with specified amount",
             responses = {
                     @ApiResponse(
-                            responseCode = "201", description = "Transfer was successfully performed",
+                            responseCode = "200", description = "Transfer was successfully performed",
                             content = @Content(schema = @Schema(implementation = TransferResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = "Bad request"),
                     @ApiResponse(responseCode = "404", description =
