@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleInternalError(Exception e) {
-        log.error("Internal error: %s, cause: %s".formatted(e.getMessage(), e.getCause().getMessage()));
+        log.error("Internal error: %s".formatted(e.getMessage()));
         return ResponseEntity.internalServerError().build();
     }
 }

@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/accountsdb
+    username: postgres
+    password: postgres
+
+logging:
+  level:
+    org.example: TRACE
+    org.hibernate.SQL: DEBUG

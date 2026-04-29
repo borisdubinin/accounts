@@ -2,15 +2,10 @@ server:
   port: 8081
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/accountsdb
-    username: postgres
-    password: postgres
+  profiles:
+    active:
+      prod
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-
-logging:
-  level:
-    org.example: DEBUG
