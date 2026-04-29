@@ -30,23 +30,12 @@ public class AccountController {
 
     @Operation(
             summary = "Create new account",
-            description = "Creates an account with the specified details"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Account was successfully created",
-                    content =
-                    @Content(schema = @Schema(implementation = AccountResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Bad request. Possible reasons: " +
-                            "1) Incorrect currency ISO 4217 code; " +
-                            "2) Request data didn't pass validation; " +
-                            "3) Other request errors"
-            )
-    })
+            description = "Creates an account with the specified details",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Account was successfully created",
+                            content = @Content(schema = @Schema(implementation = AccountResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad request")
+            })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AccountResponseDto create(@Valid @RequestBody CreateAccountRequestDto createAccountRequestDto) {
@@ -57,13 +46,11 @@ public class AccountController {
 
     @Operation(
             summary = "Get all accounts",
-            description = "Returns list of all accounts"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Accounts retrieved successfully",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountResponseDto.class)))
-    )
+            description = "Returns list of all accounts",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Accounts retrieved successfully", content =
+                    @Content(array = @ArraySchema(schema = @Schema(implementation = AccountResponseDto.class)))                    )
+            })
     @GetMapping
     public List<AccountResponseDto> getAll() {
         List<Account> allAccounts = accountService.getAll();
