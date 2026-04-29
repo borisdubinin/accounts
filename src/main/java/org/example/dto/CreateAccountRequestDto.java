@@ -1,12 +1,11 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.model.AccountCurrency;
 
 import java.math.BigDecimal;
 
@@ -29,7 +28,6 @@ public class CreateAccountRequestDto {
             allowableValues = { "BYN", "RUB", "USD", "EUR" },
             requiredMode = Schema.RequiredMode.REQUIRED
     )
-    @NotBlank(message = "Account currency is required")
-    @Size(min = 3, max = 3)
-    private String currency;
+    @NotNull(message = "Account currency is required")
+    private AccountCurrency currency;
 }

@@ -4,7 +4,6 @@ import org.example.dto.CreateAccountRequestDto;
 import org.example.dto.AccountResponseDto;
 import org.example.entity.AccountEntity;
 import org.example.model.Account;
-import org.example.model.AccountCurrency;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,11 +34,7 @@ public class AccountConverter {
     public Account toModel(CreateAccountRequestDto dto) {
         Account model = new Account();
         model.setBalance(dto.getBalance());
-        try {
-            model.setCurrency(AccountCurrency.valueOf(dto.getCurrency()));
-        } catch(IllegalArgumentException e) {
-            throw new IllegalArgumentException("%s isn't allowed currency ISO 4217 code".formatted(dto.getCurrency()));
-        }
+        model.setCurrency(dto.getCurrency());
         return model;
     }
 
