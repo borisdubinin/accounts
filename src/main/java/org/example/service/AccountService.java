@@ -18,8 +18,4 @@ public interface AccountService {
      * @return all existing accounts
      */
     List<Account> getAll();
-
-    Account getByIban(String iban);
-
-    Account update(Account account);
 }

@@ -1,22 +1,26 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.Account;
+import org.example.entity.AccountEntity;
+import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
+import org.example.model.AccountStatus;
 import org.example.model.CurrencyRate;
 import org.example.model.Transfer;
+import org.example.repository.AccountRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class TransferServiceImpl implements TransferService {
 
-    private final AccountService accountService;
+    private final AccountRepository accountRepository;
     private final CurrencyRateService currencyRateService;
 
     private static final int DECIMAL_SCALE = 2;
@@ -24,40 +28,49 @@ public class TransferServiceImpl implements TransferService {
     @Override
     @Transactional
     public Transfer performTransfer(Transfer transfer) {
-        Account senderAccount = accountService.getByIban(transfer.getIbanFrom());
-        Account receiverAccount = accountService.getByIban(transfer.getIbanTo());
+        AccountEntity sender = accountRepository.findByIbanWithLock(transfer.getIbanFrom())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Account not found with IBAN: %s".formatted(transfer.getIbanFrom())));
+        AccountEntity receiver = accountRepository.findByIbanWithLock(transfer.getIbanFrom())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Account not found with IBAN: %s".formatted(transfer.getIbanTo())));
 
-        validateBeforeTransfer(transfer.getSentAmount(), senderAccount.getBalance());
+        validateBeforeTransfer(sender, receiver, transfer);
 
         BigDecimal receivedAmount = convertAmountToReceiverCurrency(
-                transfer.getSentAmount(), senderAccount.getCurrency(), receiverAccount.getCurrency());
+                transfer.getSentAmount(), sender.getCurrency(), receiver.getCurrency());
 
-        BigDecimal senderFinalBalance = senderAccount.getBalance().subtract(transfer.getSentAmount());
-        BigDecimal receiverFinalBalance = receiverAccount.getBalance().add(receivedAmount);
+        BigDecimal senderFinalBalance = sender.getBalance().subtract(transfer.getSentAmount());
+        BigDecimal receiverFinalBalance = receiver.getBalance().add(receivedAmount);
 
-        senderAccount.setBalance(senderFinalBalance);
-        receiverAccount.setBalance(receiverFinalBalance);
-
-        Account updatedSenderAccount = accountService.update(senderAccount);
-        Account updatedRecipientAccount = accountService.update(receiverAccount);
+        sender.setBalance(senderFinalBalance);
+        receiver.setBalance(receiverFinalBalance);
 
         return Transfer.builder()
-                .ibanFrom(updatedSenderAccount.getIban())
-                .senderBalance(updatedSenderAccount.getBalance())
-                .senderCurrency(updatedSenderAccount.getCurrency())
+                .ibanFrom(sender.getIban())
+                .senderBalance(sender.getBalance())
+                .senderCurrency(sender.getCurrency())
                 .sentAmount(transfer.getSentAmount())
-                .ibanTo(updatedRecipientAccount.getIban())
-                .receiverBalance(updatedRecipientAccount.getBalance())
-                .receiverCurrency(updatedRecipientAccount.getCurrency())
+                .ibanTo(receiver.getIban())
+                .receiverBalance(receiver.getBalance())
+                .receiverCurrency(receiver.getCurrency())
                 .build();
     }
 
-    private void validateBeforeTransfer(BigDecimal sentAmount, BigDecimal senderBalance) {
-        if (sentAmount.compareTo(senderBalance) > 0) {
+    private void validateBeforeTransfer(AccountEntity sender, AccountEntity receiver, Transfer transfer) {
+        if (sender.getStatus() != AccountStatus.ACTIVE) {
+            throw new IllegalArgumentException("Impossible to perform transfer: sender account isn't active");
+        } else if (receiver.getStatus() != AccountStatus.ACTIVE) {
+            throw new IllegalArgumentException("Impossible to perform transfer: receiver account isn't active");
+        }
+        if (Objects.equals(transfer.getIbanFrom(), transfer.getIbanTo())) {
+            throw new IllegalArgumentException(
+                    "Impossible to perform transfer: receiver IBAN(%s) is equals to sender IBAN"
+                            .formatted(transfer.getIbanFrom()));
+        } else if (transfer.getSentAmount().compareTo(transfer.getSenderBalance()) > 0) {
             throw new IllegalArgumentException(
                     "Impossible to perform transfer: current balance(%s) is less than the transfer amount(%s)"
-                            .formatted(senderBalance, sentAmount)
-            );
+                            .formatted(transfer.getSenderBalance(), transfer.getSentAmount()));
         }
     }
 
@@ -68,21 +81,29 @@ public class TransferServiceImpl implements TransferService {
     ) {
         BigDecimal bynSentAmount;
         if (senderAccountCurrency != AccountCurrency.BYN) {
-            CurrencyRate senderCurrencyRate = currencyRateService.getTodayRate(senderAccountCurrency);
-            bynSentAmount = sentAmount
-                    .multiply(senderCurrencyRate.getRate())
-                    .divide(new BigDecimal(senderCurrencyRate.getScale()), DECIMAL_SCALE, RoundingMode.HALF_UP);
+            bynSentAmount = convertSendAmountToByn(sentAmount, senderAccountCurrency);
         } else {
             bynSentAmount = sentAmount;
         }
 
         if (receiverAccountCurrency != AccountCurrency.BYN) {
-            CurrencyRate receiverCurrencyRate = currencyRateService.getTodayRate(receiverAccountCurrency);
-            return bynSentAmount
-                    .multiply(new BigDecimal(receiverCurrencyRate.getScale()))
-                    .divide(receiverCurrencyRate.getRate(), DECIMAL_SCALE, RoundingMode.HALF_UP);
+            return convertSendAmountToReceiverCurrency(receiverAccountCurrency, bynSentAmount);
         } else {
             return bynSentAmount;
         }
+    }
+
+    private @NonNull BigDecimal convertSendAmountToByn(BigDecimal sentAmount, AccountCurrency senderAccountCurrency) {
+        CurrencyRate senderCurrencyRate = currencyRateService.getTodayRate(senderAccountCurrency);
+        return sentAmount
+                .multiply(senderCurrencyRate.getRate())
+                .divide(new BigDecimal(senderCurrencyRate.getScale()), DECIMAL_SCALE, RoundingMode.HALF_UP);
+    }
+
+    private @NonNull BigDecimal convertSendAmountToReceiverCurrency(AccountCurrency receiverAccountCurrency, BigDecimal bynSentAmount) {
+        CurrencyRate receiverCurrencyRate = currencyRateService.getTodayRate(receiverAccountCurrency);
+        return bynSentAmount
+                .multiply(new BigDecimal(receiverCurrencyRate.getScale()))
+                .divide(receiverCurrencyRate.getRate(), DECIMAL_SCALE, RoundingMode.HALF_UP);
     }
 }
