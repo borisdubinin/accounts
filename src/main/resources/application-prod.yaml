@@ -7,3 +7,9 @@ spring:
 logging:
   level:
     org.example: INFO
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

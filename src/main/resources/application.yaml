@@ -14,3 +14,12 @@ cache:
   balance:
     ttl: 30
     maximum-size: 10_000
+
+security:
+  users:
+    admin:
+      username: admin
+      password: admin123
+    user:
+      username: user
+      password: user123
