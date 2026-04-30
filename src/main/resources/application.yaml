@@ -12,9 +12,10 @@ national-bank-client:
   currency-rates-endpoint: /exrates/rates
 
 cache:
-  balance:
-    ttl: 30
-    maximum-size: 10_000
+  configs:
+    balance:
+      ttl: 30
+      maximum-size: 10_000
 
 security:
   users:
