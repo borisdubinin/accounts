@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.model.AccountSettings;
 
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 @Table(name = "account_settings")
 @Getter
 @Setter
+@NoArgsConstructor
 public class AccountSettingsEntity {
 
     public AccountSettingsEntity(AccountSettings settings) {
