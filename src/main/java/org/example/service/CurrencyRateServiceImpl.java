@@ -40,7 +40,7 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
     @Override
     @Retryable(maxRetries = 3)
     public void fetchAndSaveDailyRates() {
-        List<CurrencyRateResponseDto> currencyRateResponseDtos = nationalBankClient.getDailyRates(0)
+        List<CurrencyRateResponseDto> currencyRateResponseDtos = nationalBankClient.getRates(0)
                 .stream()
                 .filter(dto ->
                         Arrays.stream(AccountCurrency.values())

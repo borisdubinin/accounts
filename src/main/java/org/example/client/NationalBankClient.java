@@ -11,5 +11,5 @@ import java.util.List;
 public interface NationalBankClient {
 
     @GetMapping("${national-bank-client.currency-rates-endpoint}")
-    List<CurrencyRateResponseDto> getDailyRates(@RequestParam int periodicity);
+    List<CurrencyRateResponseDto> getRates(@RequestParam int periodicity);
 }
