@@ -1,22 +1,16 @@
 package org.example.config.properties;
 
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Getter
-@Component
-public class SecurityProperties {
+import java.util.Map;
 
-    @Value("${security.users.admin.username}")
-    private String adminUsername;
+@ConfigurationProperties(prefix = "security")
+public record SecurityProperties(Map<String, UserConfig> users) {
 
-    @Value("${security.users.admin.password}")
-    private String adminPassword;
-
-    @Value("${security.users.user.username}")
-    private String userUsername;
-
-    @Value("${security.users.user.password}")
-    private String userPassword;
+    public record UserConfig(
+            String username,
+            String password,
+            String role
+    ) {
+    }
 }

@@ -2,6 +2,7 @@ package org.example.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.config.properties.SecurityProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,43 +14,48 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties(SecurityProperties.class)
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final SecurityProperties properties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/transfers").hasRole("USER")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(httpBasic -> {});
+                .httpBasic(httpBasic -> {
+                });
 
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder, SecurityProperties properties) {
-        UserDetails admin = User.builder()
-                .username(properties.getAdminUsername())
-                .password(encoder.encode(properties.getAdminPassword()))
-                .roles("ADMIN")
-                .build();
+        UserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
 
-        UserDetails user = User.builder()
-                .username(properties.getUserUsername())
-                .password(encoder.encode(properties.getUserPassword()))
-                .roles("USER")
-                .build();
+        properties.users().forEach((name, config) -> {
+            UserDetails details = User.builder()
+                    .username(config.username())
+                    .password(encoder.encode(config.password()))
+                    .roles(config.role())
+                    .build();
 
-        return new InMemoryUserDetailsManager(admin, user);
+            userDetailsManager.createUser(details);
+        });
+
+        return userDetailsManager;
     }
 
     @Bean

@@ -22,6 +22,8 @@ security:
     admin:
       username: admin
       password: admin123
+      role: ADMIN
     user:
       username: user
       password: user123
+      role: USER
