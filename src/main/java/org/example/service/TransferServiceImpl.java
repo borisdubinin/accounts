@@ -29,11 +29,9 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     public Transfer performTransfer(Transfer transfer) {
         AccountEntity sender = accountRepository.findByIbanWithLock(transfer.getIbanFrom())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Account not found with IBAN: %s".formatted(transfer.getIbanFrom())));
+                .orElseThrow(() -> new EntityNotFoundException("Account not found with IBAN: %s".formatted(transfer.getIbanFrom())));
         AccountEntity receiver = accountRepository.findByIbanWithLock(transfer.getIbanTo())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Account not found with IBAN: %s".formatted(transfer.getIbanTo())));
+                .orElseThrow(() -> new EntityNotFoundException("Account not found with IBAN: %s".formatted(transfer.getIbanTo())));
 
         validateBeforeTransfer(sender, receiver, transfer);
 
@@ -65,20 +63,17 @@ public class TransferServiceImpl implements TransferService {
         }
         if (Objects.equals(sender.getIban(), receiver.getIban())) {
             throw new IllegalArgumentException(
-                    "Impossible to perform transfer: receiver IBAN(%s) is equals to sender IBAN"
-                            .formatted(transfer.getIbanFrom()));
+                    "Impossible to perform transfer: receiver IBAN(%s) is equals to sender IBAN".formatted(transfer.getIbanFrom()));
         } else if (transfer.getSentAmount().compareTo(sender.getBalance()) > 0) {
             throw new IllegalArgumentException(
-                    "Impossible to perform transfer: current balance(%s) is less than the transfer amount(%s)"
-                            .formatted(sender.getBalance(), transfer.getSentAmount()));
+                    "Impossible to perform transfer: current balance(%s) is less than the transfer amount(%s)".formatted(sender.getBalance(), transfer.getSentAmount()));
         }
     }
 
     private @NonNull BigDecimal convertAmountToReceiverCurrency(
             BigDecimal sentAmount,
             AccountCurrency senderAccountCurrency,
-            AccountCurrency receiverAccountCurrency
-    ) {
+            AccountCurrency receiverAccountCurrency) {
         BigDecimal bynSentAmount;
         if (senderAccountCurrency != AccountCurrency.BYN) {
             bynSentAmount = convertSendAmountToByn(sentAmount, senderAccountCurrency);

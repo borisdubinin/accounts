@@ -23,10 +23,9 @@ public class FetchCurrencyRatesServiceImpl implements FetchCurrencyRatesService 
     public void fetchAndSaveDailyRates() {
         List<CurrencyRateResponseDto> currencyRateResponseDtos = nationalBankClient.getRates(0)
                 .stream()
-                .filter(dto ->
-                        Arrays.stream(AccountCurrency.values())
-                                .anyMatch(a -> a.toString().equals(dto.getCurrency()))
-                ).toList();
+                .filter(dto -> Arrays.stream(AccountCurrency.values())
+                                .anyMatch(a -> a.toString().equals(dto.getCurrency())))
+                .toList();
         List<CurrencyRate> currencyRates = currencyRateConverter.toModels(currencyRateResponseDtos);
         currencyRateService.saveAll(currencyRates);
     }
