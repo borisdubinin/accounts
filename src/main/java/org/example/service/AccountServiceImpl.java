@@ -3,7 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.AccountConverter;
 import org.example.entity.AccountEntity;
-import org.example.entity.AccountSettings;
+import org.example.model.AccountSettings;
 import org.example.model.AccountStatus;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Account;

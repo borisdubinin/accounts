@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.entity.AccountSettings;
 import org.example.model.AccountCurrency;
+import org.example.model.AccountSettings;
 
 import java.math.BigDecimal;
 

@@ -3,7 +3,9 @@ package org.example.converter;
 import org.example.dto.CreateAccountRequestDto;
 import org.example.dto.AccountResponseDto;
 import org.example.entity.AccountEntity;
+import org.example.entity.AccountSettingsEntity;
 import org.example.model.Account;
+import org.example.model.AccountSettings;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public class AccountConverter {
         entity.setCurrency(model.getCurrency());
         entity.setStatus(model.getStatus());
         entity.setIban(model.getIban());
-        entity.setSettings(model.getSettings());
+        entity.setSettings(new AccountSettingsEntity(model.getSettings()));
         return entity;
     }
 
@@ -29,7 +31,7 @@ public class AccountConverter {
         model.setCurrency(entity.getCurrency());
         model.setStatus(entity.getStatus());
         model.setIban(entity.getIban());
-        model.setSettings(entity.getSettings());
+        model.setSettings(new AccountSettings(entity.getSettings()));
         return model;
     }
 

@@ -42,7 +42,7 @@ public class AccountEntity {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "settings_id")
-    private AccountSettings settings;
+    private AccountSettingsEntity settings;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
