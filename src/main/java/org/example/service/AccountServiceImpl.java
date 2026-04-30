@@ -50,12 +50,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private void setDefaultSettingsIfNeeded(Account account) {
-        if(account.getSettings() == null) {
+        if (account.getSettings() == null) {
             AccountSettings defaultSettings = new AccountSettings();
-            defaultSettings.setMonthlyLimit(null);
             defaultSettings.setSmsNotificationsEnabled(false);
             account.setSettings(defaultSettings);
-        } else if(account.getSettings().getSmsNotificationsEnabled() == null) {
+        } else if (account.getSettings().getSmsNotificationsEnabled() == null) {
             account.getSettings().setSmsNotificationsEnabled(false);
         }
     }
