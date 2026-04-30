@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.AccountConverter;
-import org.example.converter.BalanceConverter;
 import org.example.dto.*;
 import org.example.model.Account;
 import org.example.service.AccountService;
@@ -26,7 +25,6 @@ public class AccountController {
 
     private final AccountService accountService;
     private final AccountConverter accountConverter;
-    private final BalanceConverter balanceConverter;
 
     @Operation(
             summary = "Create new account",
@@ -72,6 +70,6 @@ public class AccountController {
     public GetBalanceResponseDto getBalance(@Valid @RequestBody GetBalanceRequestDto getBalanceRequestDto) {
         String iban = getBalanceRequestDto.getIban();
         Account account = accountService.getByIban(iban);
-        return balanceConverter.toDto(account);
+        return new GetBalanceResponseDto(account.getBalance(), account.getCurrency());
     }
 }
