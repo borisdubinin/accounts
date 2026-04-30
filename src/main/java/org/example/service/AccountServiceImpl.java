@@ -3,6 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.converter.AccountConverter;
 import org.example.entity.AccountEntity;
+import org.example.entity.AccountSettings;
 import org.example.model.AccountStatus;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Account;
@@ -25,6 +26,7 @@ public class AccountServiceImpl implements AccountService {
     public Account create(Account account) {
         account.setStatus(AccountStatus.ACTIVE);
         account.setIban(IbanGenerator.generateIban());
+        setDefaultSettingsIfNeeded(account);
         AccountEntity entity = accountConverter.toEntity(account);
         AccountEntity newEntity = accountRepository.save(entity);
         return accountConverter.toModel(newEntity);
@@ -33,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly = true)
     @Override
     public List<Account> getAll() {
-        List<AccountEntity> accountEntities = accountRepository.findAll();
+        List<AccountEntity> accountEntities = accountRepository.findAllWithSettings();
         return accountConverter.toModels(accountEntities);
     }
 
@@ -45,5 +47,16 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Account not found with IBAN: %s".formatted(iban)));
         return accountConverter.toModel(accountEntity);
+    }
+
+    private void setDefaultSettingsIfNeeded(Account account) {
+        if(account.getSettings() == null) {
+            AccountSettings defaultSettings = new AccountSettings();
+            defaultSettings.setMonthlyLimit(null);
+            defaultSettings.setSmsNotificationsEnabled(false);
+            account.setSettings(defaultSettings);
+        } else if(account.getSettings().getSmsNotificationsEnabled() == null) {
+            account.getSettings().setSmsNotificationsEnabled(false);
+        }
     }
 }

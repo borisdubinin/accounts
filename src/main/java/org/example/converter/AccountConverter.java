@@ -18,6 +18,7 @@ public class AccountConverter {
         entity.setCurrency(model.getCurrency());
         entity.setStatus(model.getStatus());
         entity.setIban(model.getIban());
+        entity.setSettings(model.getSettings());
         return entity;
     }
 
@@ -28,6 +29,7 @@ public class AccountConverter {
         model.setCurrency(entity.getCurrency());
         model.setStatus(entity.getStatus());
         model.setIban(entity.getIban());
+        model.setSettings(entity.getSettings());
         return model;
     }
 
@@ -35,6 +37,7 @@ public class AccountConverter {
         Account model = new Account();
         model.setBalance(dto.getBalance());
         model.setCurrency(dto.getCurrency());
+        model.setSettings(dto.getSettings());
         return model;
     }
 
@@ -51,6 +54,7 @@ public class AccountConverter {
         dto.setCurrency(model.getCurrency());
         dto.setStatus(model.getStatus());
         dto.setIban(model.getIban());
+        dto.setSettings(model.getSettings());
         return dto;
     }
 

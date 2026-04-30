@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db/changelog/001-create-accounts.yaml
   - include:
       file: db/changelog/002-create-currency-rates.yaml
+  - include:
+      file: db/changelog/003-create-account-settings.yaml
+  - include:
+      file: db/changelog/004-add-settings-foreign-key.yaml

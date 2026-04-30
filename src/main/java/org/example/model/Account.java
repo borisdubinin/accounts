@@ -2,6 +2,7 @@ package org.example.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.entity.AccountSettings;
 
 import java.math.BigDecimal;
 
@@ -14,4 +15,5 @@ public class Account {
     private AccountCurrency currency;
     private AccountStatus status;
     private String iban;
+    private AccountSettings settings;
 }

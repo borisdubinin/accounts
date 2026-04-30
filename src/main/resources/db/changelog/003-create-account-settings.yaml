@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-account-settings-table
+      author: borisdubinin
+      changes:
+        - createTable:
+            tableName: account_settings
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: monthly_limit
+                  type: DECIMAL(15,2)
+              - column:
+                  name: sms_notifications_enabled
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.entity.AccountSettings;
 import org.example.model.AccountCurrency;
 
 import java.math.BigDecimal;
@@ -30,4 +31,10 @@ public class CreateAccountRequestDto {
     )
     @NotNull(message = "Account currency is required")
     private AccountCurrency currency;
+
+    @Schema(
+            description = "Account settings",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED
+    )
+    private AccountSettings settings;
 }

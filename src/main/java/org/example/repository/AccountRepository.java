@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
@@ -15,4 +16,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     Optional<AccountEntity> findByIbanWithLock(String iban);
 
     Optional<AccountEntity> findByIban(String iban);
+
+    @Query("SELECT a FROM AccountEntity a JOIN FETCH a.settings")
+    List<AccountEntity> findAllWithSettings();
 }
