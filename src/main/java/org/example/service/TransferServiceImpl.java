@@ -31,7 +31,7 @@ public class TransferServiceImpl implements TransferService {
         AccountEntity sender = accountRepository.findByIbanWithLock(transfer.getIbanFrom())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Account not found with IBAN: %s".formatted(transfer.getIbanFrom())));
-        AccountEntity receiver = accountRepository.findByIbanWithLock(transfer.getIbanFrom())
+        AccountEntity receiver = accountRepository.findByIbanWithLock(transfer.getIbanTo())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Account not found with IBAN: %s".formatted(transfer.getIbanTo())));
 
@@ -63,14 +63,14 @@ public class TransferServiceImpl implements TransferService {
         } else if (receiver.getStatus() != AccountStatus.ACTIVE) {
             throw new IllegalArgumentException("Impossible to perform transfer: receiver account isn't active");
         }
-        if (Objects.equals(transfer.getIbanFrom(), transfer.getIbanTo())) {
+        if (Objects.equals(sender.getIban(), receiver.getIban())) {
             throw new IllegalArgumentException(
                     "Impossible to perform transfer: receiver IBAN(%s) is equals to sender IBAN"
                             .formatted(transfer.getIbanFrom()));
-        } else if (transfer.getSentAmount().compareTo(transfer.getSenderBalance()) > 0) {
+        } else if (transfer.getSentAmount().compareTo(sender.getBalance()) > 0) {
             throw new IllegalArgumentException(
                     "Impossible to perform transfer: current balance(%s) is less than the transfer amount(%s)"
-                            .formatted(transfer.getSenderBalance(), transfer.getSentAmount()));
+                            .formatted(sender.getBalance(), transfer.getSentAmount()));
         }
     }
 
