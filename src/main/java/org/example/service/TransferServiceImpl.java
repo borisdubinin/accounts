@@ -20,10 +20,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TransferServiceImpl implements TransferService {
 
+    private static final int AMOUNT_SCALE = 2;
+
     private final AccountRepository accountRepository;
     private final CurrencyRateService currencyRateService;
-
-    private static final int DECIMAL_SCALE = 2;
 
     @Override
     @Transactional
@@ -96,13 +96,13 @@ public class TransferServiceImpl implements TransferService {
         CurrencyRate senderCurrencyRate = currencyRateService.getTodayRate(senderAccountCurrency);
         return sentAmount
                 .multiply(senderCurrencyRate.getRate())
-                .divide(new BigDecimal(senderCurrencyRate.getScale()), DECIMAL_SCALE, RoundingMode.HALF_UP);
+                .divide(new BigDecimal(senderCurrencyRate.getScale()), AMOUNT_SCALE, RoundingMode.HALF_UP);
     }
 
     private @NonNull BigDecimal convertSendAmountToReceiverCurrency(AccountCurrency receiverAccountCurrency, BigDecimal bynSentAmount) {
         CurrencyRate receiverCurrencyRate = currencyRateService.getTodayRate(receiverAccountCurrency);
         return bynSentAmount
                 .multiply(new BigDecimal(receiverCurrencyRate.getScale()))
-                .divide(receiverCurrencyRate.getRate(), DECIMAL_SCALE, RoundingMode.HALF_UP);
+                .divide(receiverCurrencyRate.getRate(), AMOUNT_SCALE, RoundingMode.HALF_UP);
     }
 }
