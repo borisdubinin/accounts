@@ -20,7 +20,7 @@ public class CurrencyRateScheduler {
         try {
             log.info("Attempt to fetch currency rates");
             fetchCurrencyRatesService.fetchAndSaveDailyRates();
-            log.info("Fetched successfully");
+            log.info("Currency rates fetched successfully");
         } catch(Exception e) {
             log.error("Failed to fetch currency rates: %s".formatted(e.getMessage()));
         }
