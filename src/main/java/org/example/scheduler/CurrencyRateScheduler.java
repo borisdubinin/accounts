@@ -2,7 +2,7 @@ package org.example.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.service.FetchCurrencyRatesService;
+import org.example.service.CurrencyRateService;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CurrencyRateScheduler {
 
-    private final FetchCurrencyRatesService fetchCurrencyRatesService;
+    private final CurrencyRateService currencyRateService;
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Minsk")
     @Retryable
     public void fetchAndSaveDailyRates() {
         try {
             log.info("Attempt to fetch currency rates");
-            fetchCurrencyRatesService.fetchAndSaveDailyRates();
+            currencyRateService.fetchAndSaveDailyRates();
             log.info("Currency rates fetched successfully");
         } catch(Exception e) {
             log.error("Failed to fetch currency rates: %s".formatted(e.getMessage()));

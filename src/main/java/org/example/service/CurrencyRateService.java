@@ -19,4 +19,9 @@ public interface CurrencyRateService {
      * @param currencyRates list of {@link CurrencyRate} you need to save
      */
     void saveAll(List<CurrencyRate> currencyRates);
+
+    /**
+     * Fetches today currency rates and saves them to the repository
+     */
+    void fetchAndSaveDailyRates();
 }

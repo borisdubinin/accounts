@@ -15,18 +15,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FetchCurrencyRatesServiceImpl implements FetchCurrencyRatesService {
 
-    private final CurrencyRateService currencyRateService;
+    private static final int DAILY_CURRENCY_RATE_PERIODICITY = 0;
+
     private final NationalBankClient nationalBankClient;
     private final CurrencyRateConverter currencyRateConverter;
 
     @Override
-    public void fetchAndSaveDailyRates() {
-        List<CurrencyRateResponseDto> currencyRateResponseDtos = nationalBankClient.getRates(0)
+    public List<CurrencyRate> fetchDailyRates() {
+        List<CurrencyRateResponseDto> currencyRateResponseDtos = nationalBankClient.getRates(DAILY_CURRENCY_RATE_PERIODICITY)
                 .stream()
                 .filter(dto -> Arrays.stream(AccountCurrency.values())
                                 .anyMatch(a -> a.toString().equals(dto.getCurrency())))
                 .toList();
-        List<CurrencyRate> currencyRates = currencyRateConverter.toModels(currencyRateResponseDtos);
-        currencyRateService.saveAll(currencyRates);
+        return currencyRateConverter.toModels(currencyRateResponseDtos);
     }
 }

@@ -24,9 +24,6 @@ import static org.mockito.Mockito.*;
 class FetchCurrencyRatesServiceImplTest {
 
     @Mock
-    private CurrencyRateService currencyRateService;
-
-    @Mock
     private NationalBankClient nationalBankClient;
 
     @Spy
@@ -58,17 +55,16 @@ class FetchCurrencyRatesServiceImplTest {
     }
 
     @Test
-    void fetchAndSaveDailyRates_ShouldFilterAndConvertCorrectly() {
+    void fetchDailyRates_ShouldFilterAndConvertCorrectly() {
         List<CurrencyRateResponseDto> allRates = List.of(usdDto, eurDto, rubDto, gbpDto);
         when(nationalBankClient.getRates(0)).thenReturn(allRates);
 
-        fetchCurrencyRatesService.fetchAndSaveDailyRates();
+        List<CurrencyRate> result = fetchCurrencyRatesService.fetchDailyRates();
 
-        verify(currencyRateService, times(1)).saveAll(argThat(this::validateSavedRates));
-        verify(nationalBankClient, times(1)).getRates(0);
+        validateSavedRates(result);
     }
 
-    private boolean validateSavedRates(List<CurrencyRate> rates) {
+    private void validateSavedRates(List<CurrencyRate> rates) {
         assertThat(rates).hasSize(3);
 
         assertThat(rates).anySatisfy(rate -> {
@@ -88,25 +84,23 @@ class FetchCurrencyRatesServiceImplTest {
             assertThat(rate.getScale()).isEqualTo(100);
             assertThat(rate.getRate()).isEqualByComparingTo("3.0");
         });
-
-        return true;
     }
 
     @Test
-    void fetchAndSaveDailyRates_WhenNoSupportedCurrencies_ShouldSaveEmptyList() {
+    void fetchDailyRates_WhenNoSupportedCurrencies_ShouldSaveEmptyList() {
         when(nationalBankClient.getRates(0)).thenReturn(List.of(gbpDto));
 
-        fetchCurrencyRatesService.fetchAndSaveDailyRates();
+        List<CurrencyRate> result = fetchCurrencyRatesService.fetchDailyRates();
 
-        verify(currencyRateService, times(1)).saveAll(argThat(List::isEmpty));
+        assertThat(result).hasSize(0);
     }
 
     @Test
-    void fetchAndSaveDailyRates_WhenClientReturnsEmptyList_ShouldSaveEmptyList() {
+    void fetchDailyRates_WhenClientReturnsEmptyList_ShouldSaveEmptyList() {
         when(nationalBankClient.getRates(0)).thenReturn(List.of());
 
-        fetchCurrencyRatesService.fetchAndSaveDailyRates();
+        List<CurrencyRate> result = fetchCurrencyRatesService.fetchDailyRates();
 
-        verify(currencyRateService, times(1)).saveAll(argThat(List::isEmpty));
+        assertThat(result).hasSize(0);
     }
 }
