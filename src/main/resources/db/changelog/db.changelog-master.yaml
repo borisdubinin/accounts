@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/004-add-settings-foreign-key.yaml
   - include:
       file: db/changelog/005-add-uq-account-settings.yaml
+  - include:
+      file: db/changelog/006-account-settings-shared-pk.yaml

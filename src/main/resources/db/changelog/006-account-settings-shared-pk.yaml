@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-migrate-to-shared-pk
+      author: borisdubinin
+      changes:
+        - addColumn:
+            tableName: account_settings
+            columns:
+              - column:
+                  name: account_id
+                  type: BIGINT
+
+        - sql:
+            sql: |
+              UPDATE account_settings SET account_id = a.id 
+              FROM accounts a 
+              WHERE a.settings_id = account_settings.id
+
+        - dropForeignKeyConstraint:
+            baseTableName: accounts
+            constraintName: fk_accounts_settings
+
+        - dropUniqueConstraint:
+            tableName: accounts
+            constraintName: uq_accounts_settings_id
+
+        - dropPrimaryKey:
+            tableName: account_settings
+
+        - addPrimaryKey:
+            tableName: account_settings
+            columnNames: account_id
+
+        - addForeignKeyConstraint:
+            baseTableName: account_settings
+            baseColumnNames: account_id
+            referencedTableName: accounts
+            referencedColumnNames: id
+            constraintName: fk_account_settings_accounts
+
+        - dropColumn:
+            tableName: accounts
+            columnName: settings_id
+
+        - dropColumn:
+            tableName: account_settings
+            columnName: id

@@ -28,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
         account.setIban(IbanGenerator.generateIban());
         setDefaultSettingsIfNeeded(account);
         AccountEntity entity = accountConverter.toEntity(account);
+        entity.getSettings().setAccount(entity);
         AccountEntity newEntity = accountRepository.save(entity);
         return accountConverter.toModel(newEntity);
     }

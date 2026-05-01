@@ -31,8 +31,7 @@ public class AccountEntity {
 
     private String iban;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "settings_id")
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, optional = false)
     private AccountSettingsEntity settings;
 
     @CreationTimestamp
