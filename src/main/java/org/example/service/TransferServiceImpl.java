@@ -74,6 +74,10 @@ public class TransferServiceImpl implements TransferService {
             BigDecimal sentAmount,
             AccountCurrency senderAccountCurrency,
             AccountCurrency receiverAccountCurrency) {
+        if(senderAccountCurrency == receiverAccountCurrency) {
+            return sentAmount;
+        }
+
         BigDecimal bynSentAmount;
         if (senderAccountCurrency != AccountCurrency.BYN) {
             bynSentAmount = convertSendAmountToByn(sentAmount, senderAccountCurrency);

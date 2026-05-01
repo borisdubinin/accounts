@@ -1,6 +1,7 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -36,5 +37,6 @@ public class TransferRequestDto {
     )
     @NotNull(message = "Sent amount is required to perform the transfer")
     @Positive(message = "Sent amount cannot be less or equals to 0")
+    @Digits(integer = 18, fraction = 2, message = "The amount must contain no more than 2 decimal places")
     private BigDecimal sentAmount;
 }
