@@ -7,9 +7,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "cache")
 public record CacheProperties(Map<String, CacheConfig> configs) {
 
-    public record CacheConfig(
-            int ttl,
-            long maximumSize
-    ) {
+    public record CacheConfig(int ttl, long maximumSize) {
     }
 }
