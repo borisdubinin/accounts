@@ -6,10 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.example.model.AccountSettings;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -20,9 +17,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class AccountSettingsEntity {
 
-    public AccountSettingsEntity(AccountSettings settings) {
-        this.monthlyLimit = settings.getMonthlyLimit();
-        this.smsNotificationsEnabled = settings.getSmsNotificationsEnabled();
+    public AccountSettingsEntity(BigDecimal monthlyLimit, Boolean smsNotificationsEnabled) {
+        this.monthlyLimit = monthlyLimit;
+        this.smsNotificationsEnabled = smsNotificationsEnabled;
     }
 
     @Id

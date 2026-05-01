@@ -1,5 +1,6 @@
 package org.example.converter;
 
+import org.example.dto.AccountSettingsDto;
 import org.example.dto.CreateAccountRequestDto;
 import org.example.dto.AccountResponseDto;
 import org.example.entity.AccountEntity;
@@ -20,7 +21,10 @@ public class AccountConverter {
         entity.setCurrency(model.getCurrency());
         entity.setStatus(model.getStatus());
         entity.setIban(model.getIban());
-        entity.setSettings(new AccountSettingsEntity(model.getSettings()));
+        entity.setSettings(new AccountSettingsEntity(
+                model.getSettings().getMonthlyLimit(),
+                model.getSettings().getSmsNotificationsEnabled()
+        ));
         return entity;
     }
 
@@ -31,7 +35,9 @@ public class AccountConverter {
         model.setCurrency(entity.getCurrency());
         model.setStatus(entity.getStatus());
         model.setIban(entity.getIban());
-        model.setSettings(new AccountSettings(entity.getSettings()));
+        model.setSettings(new AccountSettings(
+                entity.getSettings().getMonthlyLimit(),
+                entity.getSettings().getSmsNotificationsEnabled()));
         return model;
     }
 
@@ -39,7 +45,11 @@ public class AccountConverter {
         Account model = new Account();
         model.setBalance(dto.getBalance());
         model.setCurrency(dto.getCurrency());
-        model.setSettings(dto.getSettings());
+        model.setSettings(dto.getSettings() != null
+                ? new AccountSettings(
+                dto.getSettings().getMonthlyLimit(),
+                dto.getSettings().getSmsNotificationsEnabled())
+                : null);
         return model;
     }
 
@@ -56,7 +66,9 @@ public class AccountConverter {
         dto.setCurrency(model.getCurrency());
         dto.setStatus(model.getStatus());
         dto.setIban(model.getIban());
-        dto.setSettings(model.getSettings());
+        dto.setSettings(new AccountSettingsDto(
+                model.getSettings().getMonthlyLimit(),
+                model.getSettings().getSmsNotificationsEnabled()));
         return dto;
     }
 

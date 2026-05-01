@@ -146,7 +146,9 @@ public class AccountServiceImplTest {
             expectedAccount.setCurrency(testAccountEntity.getCurrency());
             expectedAccount.setStatus(testAccountEntity.getStatus());
             expectedAccount.setIban(testAccountEntity.getIban());
-            expectedAccount.setSettings(new AccountSettings(testAccountEntity.getSettings()));
+            expectedAccount.setSettings(new AccountSettings(
+                    testAccountEntity.getSettings().getMonthlyLimit(),
+                    testAccountEntity.getSettings().getSmsNotificationsEnabled()));
             List<Account> expectedAccounts = List.of(expectedAccount);
             List<AccountEntity> entities = List.of(testAccountEntity);
 
@@ -184,7 +186,9 @@ public class AccountServiceImplTest {
             expectedAccount.setCurrency(testAccountEntity.getCurrency());
             expectedAccount.setStatus(testAccountEntity.getStatus());
             expectedAccount.setIban(testAccountEntity.getIban());
-            expectedAccount.setSettings(new AccountSettings(testAccountEntity.getSettings()));
+            expectedAccount.setSettings(new AccountSettings(
+                    testAccountEntity.getSettings().getMonthlyLimit(),
+                    testAccountEntity.getSettings().getSmsNotificationsEnabled()));
             when(accountRepository.findByIban(testAccountEntity.getIban()))
                     .thenReturn(Optional.of(testAccountEntity));
 

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.model.AccountCurrency;
-import org.example.model.AccountSettings;
 
 import java.math.BigDecimal;
 
@@ -36,5 +35,5 @@ public class CreateAccountRequestDto {
             description = "Account settings",
             requiredMode = Schema.RequiredMode.NOT_REQUIRED
     )
-    private AccountSettings settings;
+    private AccountSettingsDto settings;
 }
