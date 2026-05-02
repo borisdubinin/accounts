@@ -21,13 +21,13 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager(CacheProperties properties) {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCacheNames(properties.configs().keySet());
+        cacheManager.setAllowNullValues(false);
         properties.configs().forEach((name, config) -> {
             Cache<Object, Object> cache = buildCache(config);
 
             cacheManager.registerCustomCache(name, cache);
         });
-        cacheManager.setCacheNames(properties.configs().keySet());
-        cacheManager.setAllowNullValues(false);
         return cacheManager;
     }
 
