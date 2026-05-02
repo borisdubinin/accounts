@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.annotation.LogExecutionTime;
 import org.example.entity.AccountEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
@@ -27,6 +28,7 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     @Transactional
+    @LogExecutionTime
     public Transfer performTransfer(Transfer transfer) {
         AccountEntity sender = accountRepository.findByIbanWithLock(transfer.getIbanFrom())
                 .orElseThrow(() -> new EntityNotFoundException("Account not found with IBAN: %s".formatted(transfer.getIbanFrom())));

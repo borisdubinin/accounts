@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.annotation.LogExecutionTime;
 import org.example.converter.AccountConverter;
 import org.example.dto.*;
 import org.example.model.Account;
@@ -66,6 +67,7 @@ public class AccountController {
                     @ApiResponse(responseCode = "404", description =
                             "Specified resource didn't found (example: non-existent IBAN of the account)")
             })
+    @LogExecutionTime
     @GetMapping("/balance")
     public GetBalanceResponseDto getBalance(@Valid @RequestBody GetBalanceRequestDto getBalanceRequestDto) {
         String iban = getBalanceRequestDto.getIban();

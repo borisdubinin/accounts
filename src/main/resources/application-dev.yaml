@@ -8,5 +8,5 @@ logging:
   level:
     org.example: DEBUG
     org.hibernate.SQL: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    org.springframework.security: INFO
+    org.springframework.web: INFO
