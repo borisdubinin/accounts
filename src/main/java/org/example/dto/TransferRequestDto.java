@@ -1,10 +1,7 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +17,7 @@ public class TransferRequestDto {
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     @NotBlank(message = "IBAN is required to perform the transfer")
+    @Size(min = 32, max = 32)
     private String ibanFrom;
 
     @Schema(
@@ -28,6 +26,7 @@ public class TransferRequestDto {
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     @NotBlank(message = "IBAN is required to perform the transfer")
+    @Size(min = 32, max = 32)
     private String ibanTo;
 
     @Schema(
