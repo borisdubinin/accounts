@@ -2,7 +2,7 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.client.NationalBankClient;
-import org.example.converter.CurrencyRateConverter;
+import org.example.converter.CurrencyModelAndDtoConverter;
 import org.example.dto.CurrencyRateResponseDto;
 import org.example.model.AccountCurrency;
 import org.example.model.CurrencyRate;
@@ -18,7 +18,7 @@ public class FetchCurrencyRatesServiceImpl implements FetchCurrencyRatesService 
     private static final int DAILY_CURRENCY_RATE_PERIODICITY = 0;
 
     private final NationalBankClient nationalBankClient;
-    private final CurrencyRateConverter currencyRateConverter;
+    private final CurrencyModelAndDtoConverter currencyRateConverter;
 
     @Override
     public List<CurrencyRate> fetchDailyRates() {

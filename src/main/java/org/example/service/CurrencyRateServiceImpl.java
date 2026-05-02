@@ -1,7 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.converter.CurrencyRateConverter;
+import org.example.converter.CurrencyEntityAndModelConverter;
 import org.example.entity.CurrencyRateEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
@@ -17,7 +17,7 @@ import java.util.List;
 public class CurrencyRateServiceImpl implements CurrencyRateService {
 
     private final CurrencyRateRepository currencyRateRepository;
-    private final CurrencyRateConverter currencyRateConverter;
+    private final CurrencyEntityAndModelConverter currencyRateConverter;
     private final FetchCurrencyRatesService fetchCurrencyRatesService;
 
     @Override

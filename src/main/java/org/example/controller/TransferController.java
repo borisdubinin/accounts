@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.converter.TransferConverter;
+import org.example.converter.TransferModelAndDtoConverter;
 import org.example.dto.TransferRequestDto;
 import org.example.dto.TransferResponseDto;
 import org.example.model.Transfer;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TransferController {
 
-    private final TransferConverter transferConverter;
+    private final TransferModelAndDtoConverter transferConverter;
     private final TransferService transferService;
 
     @Operation(

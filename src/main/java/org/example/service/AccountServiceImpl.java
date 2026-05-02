@@ -1,7 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.converter.AccountConverter;
+import org.example.converter.AccountEntityAndModelConverter;
 import org.example.entity.AccountEntity;
 import org.example.model.AccountSettings;
 import org.example.model.AccountStatus;
@@ -20,7 +20,7 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
-    private final AccountConverter accountConverter;
+    private final AccountEntityAndModelConverter accountConverter;
 
     @Override
     public Account create(Account account) {

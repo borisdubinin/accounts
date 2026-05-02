@@ -6,8 +6,11 @@ import org.example.model.Transfer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TransferConverter {
+public class TransferModelAndDtoConverter implements
+        ModelToDtoConverter<Transfer, TransferResponseDto>,
+        DtoToModelConverter<TransferRequestDto, Transfer> {
 
+    @Override
     public Transfer toModel(TransferRequestDto dto) {
         return Transfer.builder()
                 .ibanFrom(dto.getIbanFrom())
@@ -16,6 +19,7 @@ public class TransferConverter {
                 .build();
     }
 
+    @Override
     public TransferResponseDto toDto(Transfer transfer) {
         TransferResponseDto dto = new TransferResponseDto();
         dto.setIbanFrom(transfer.getIbanFrom());

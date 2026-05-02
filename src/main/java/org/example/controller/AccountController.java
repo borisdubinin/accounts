@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.annotation.LogExecutionTime;
-import org.example.converter.AccountConverter;
+import org.example.converter.AccountModelAndDtoConverter;
 import org.example.dto.*;
 import org.example.model.Account;
 import org.example.service.AccountService;
@@ -25,7 +25,7 @@ import java.util.List;
 public class AccountController {
 
     private final AccountService accountService;
-    private final AccountConverter accountConverter;
+    private final AccountModelAndDtoConverter accountConverter;
 
     @Operation(
             summary = "Create new account",

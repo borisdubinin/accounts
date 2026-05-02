@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.converter.CurrencyRateConverter;
+import org.example.converter.CurrencyEntityAndModelConverter;
 import org.example.entity.CurrencyRateEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
@@ -30,7 +30,7 @@ class CurrencyRateServiceImplTest {
     private CurrencyRateRepository currencyRateRepository;
 
     @Spy
-    private CurrencyRateConverter currencyRateConverter;
+    private CurrencyEntityAndModelConverter currencyRateConverter;
 
     @InjectMocks
     private CurrencyRateServiceImpl currencyRateServiceImpl;

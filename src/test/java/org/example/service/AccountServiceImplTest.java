@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.converter.AccountConverter;
+import org.example.converter.AccountEntityAndModelConverter;
 import org.example.entity.AccountEntity;
 import org.example.entity.AccountSettingsEntity;
 import org.example.exception.EntityNotFoundException;
@@ -34,7 +34,7 @@ public class AccountServiceImplTest {
     private AccountRepository accountRepository;
 
     @Spy
-    private AccountConverter accountConverter;
+    private AccountEntityAndModelConverter accountConverter;
 
     @InjectMocks
     private AccountServiceImpl accountServiceImpl;

@@ -1,7 +1,7 @@
 package org.example.service;
 
 import org.example.client.NationalBankClient;
-import org.example.converter.CurrencyRateConverter;
+import org.example.converter.CurrencyModelAndDtoConverter;
 import org.example.dto.CurrencyRateResponseDto;
 import org.example.model.AccountCurrency;
 import org.example.model.CurrencyRate;
@@ -27,7 +27,7 @@ class FetchCurrencyRatesServiceImplTest {
     private NationalBankClient nationalBankClient;
 
     @Spy
-    private CurrencyRateConverter currencyRateConverter;
+    private CurrencyModelAndDtoConverter currencyRateConverter;
 
     @InjectMocks
     private FetchCurrencyRatesServiceImpl fetchCurrencyRatesService;
