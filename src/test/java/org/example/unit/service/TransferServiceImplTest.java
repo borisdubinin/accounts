@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.unit.service;
 
 import org.example.entity.AccountEntity;
 import org.example.exception.EntityNotFoundException;
@@ -7,6 +7,8 @@ import org.example.model.AccountStatus;
 import org.example.model.CurrencyRate;
 import org.example.model.Transfer;
 import org.example.repository.AccountRepository;
+import org.example.service.CurrencyRateService;
+import org.example.service.TransferServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

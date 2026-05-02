@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.unit.service;
 
 import org.example.converter.CurrencyEntityAndModelConverter;
 import org.example.entity.CurrencyRateEntity;
@@ -6,6 +6,7 @@ import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
 import org.example.model.CurrencyRate;
 import org.example.repository.CurrencyRateRepository;
+import org.example.service.CurrencyRateServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

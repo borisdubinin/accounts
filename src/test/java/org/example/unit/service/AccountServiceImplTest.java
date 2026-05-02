@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.unit.service;
 
 import org.example.converter.AccountEntityAndModelConverter;
 import org.example.entity.AccountEntity;
@@ -9,6 +9,7 @@ import org.example.model.AccountCurrency;
 import org.example.model.AccountSettings;
 import org.example.model.AccountStatus;
 import org.example.repository.AccountRepository;
+import org.example.service.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,11 @@
-package org.example.service;
+package org.example.unit.service;
 
 import org.example.client.NationalBankClient;
 import org.example.converter.CurrencyModelAndDtoConverter;
 import org.example.dto.CurrencyRateResponseDto;
 import org.example.model.AccountCurrency;
 import org.example.model.CurrencyRate;
+import org.example.service.NationalBankService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
