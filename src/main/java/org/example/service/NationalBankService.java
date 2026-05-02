@@ -13,14 +13,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class FetchCurrencyRatesServiceImpl implements FetchCurrencyRatesService {
+public class NationalBankService {
 
     private static final int DAILY_CURRENCY_RATE_PERIODICITY = 0;
 
     private final NationalBankClient nationalBankClient;
     private final CurrencyModelAndDtoConverter currencyRateConverter;
 
-    @Override
     public List<CurrencyRate> fetchDailyRates() {
         List<CurrencyRateResponseDto> currencyRateResponseDtos = nationalBankClient.getRates(DAILY_CURRENCY_RATE_PERIODICITY)
                 .stream()

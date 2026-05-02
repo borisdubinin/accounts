@@ -18,7 +18,6 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
 
     private final CurrencyRateRepository currencyRateRepository;
     private final CurrencyEntityAndModelConverter currencyRateConverter;
-    private final FetchCurrencyRatesService fetchCurrencyRatesService;
 
     @Override
     public CurrencyRate getTodayRate(AccountCurrency currency) {
@@ -31,11 +30,5 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
     public void saveAll(List<CurrencyRate> currencyRates) {
         List<CurrencyRateEntity> entities = currencyRateConverter.toEntities(currencyRates);
         currencyRateRepository.saveAll(entities);
-    }
-
-    @Override
-    public void fetchAndSaveDailyRates() {
-        List<CurrencyRate> dailyCurrencyRates = fetchCurrencyRatesService.fetchDailyRates();
-        saveAll(dailyCurrencyRates);
     }
 }

@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FetchCurrencyRatesServiceImplTest {
+class NationalBankServiceTest {
 
     @Mock
     private NationalBankClient nationalBankClient;
@@ -30,7 +30,7 @@ class FetchCurrencyRatesServiceImplTest {
     private CurrencyModelAndDtoConverter currencyRateConverter;
 
     @InjectMocks
-    private FetchCurrencyRatesServiceImpl fetchCurrencyRatesService;
+    private NationalBankService fetchCurrencyRatesService;
 
     private CurrencyRateResponseDto usdDto;
     private CurrencyRateResponseDto eurDto;

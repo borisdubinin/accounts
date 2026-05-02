@@ -1,13 +1,20 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.model.CurrencyRate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public interface FetchCurrencyRatesService {
+@Component
+@RequiredArgsConstructor
+public class FetchCurrencyRatesService {
 
-    /**
-     * Fetches today currency rates via API
-     */
-    List<CurrencyRate> fetchDailyRates();
+    private final NationalBankService nationalBankService;
+    private final CurrencyRateService currencyRateService;
+
+    public void fetchAndSaveDailyRates() {
+        List<CurrencyRate> currencyRates = nationalBankService.fetchDailyRates();
+        currencyRateService.saveAll(currencyRates);
+    }
 }

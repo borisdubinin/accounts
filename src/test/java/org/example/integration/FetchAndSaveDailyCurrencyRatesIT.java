@@ -23,6 +23,7 @@ import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -127,7 +128,7 @@ public class FetchAndSaveDailyCurrencyRatesIT {
                         .withStatus(500)
                         .withBody("{\"error\": \"Internal Server Error\"}")));
 
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(currencyRateScheduler::fetchAndSaveDailyRates);
+        assertThatThrownBy(currencyRateScheduler::fetchAndSaveDailyRates);
 
         List<CurrencyRateEntity> savedRates = currencyRateRepository.findAll();
         assertThat(savedRates).isEmpty();
@@ -415,29 +416,31 @@ public class FetchAndSaveDailyCurrencyRatesIT {
             """.replaceAll("\\s", "");
 
     String MOCK_RESPONSE2 = """
+            [
                 {
-                         "Cur_ID": 510,
-                         "Date": "2026-05-02T00:00:00",
-                         "Cur_Abbreviation": "AMD",
-                         "Cur_Scale": 1000,
-                         "Cur_Name": "Армянских драмов",
-                         "Cur_OfficialRate": 7.6010
-                     },
-                     {
-                         "Cur_ID": 514,
-                         "Date": "2026-05-02T00:00:00",
-                         "Cur_Abbreviation": "BRL",
-                         "Cur_Scale": 10,
-                         "Cur_Name": "Бразильских реалов",
-                         "Cur_OfficialRate": 5.6756
-                     },
-                     {
-                         "Cur_ID": 449,
-                         "Date": "2026-05-02T00:00:00",
-                         "Cur_Abbreviation": "UAH",
-                         "Cur_Scale": 100,
-                         "Cur_Name": "Гривен",
-                         "Cur_OfficialRate": 6.4071
-                     }
-                """.replaceAll("\\s", "");
+                     "Cur_ID": 510,
+                     "Date": "2026-05-02T00:00:00",
+                     "Cur_Abbreviation": "AMD",
+                     "Cur_Scale": 1000,
+                     "Cur_Name": "Армянских драмов",
+                     "Cur_OfficialRate": 7.6010
+                 },
+                 {
+                     "Cur_ID": 514,
+                     "Date": "2026-05-02T00:00:00",
+                     "Cur_Abbreviation": "BRL",
+                     "Cur_Scale": 10,
+                     "Cur_Name": "Бразильских реалов",
+                     "Cur_OfficialRate": 5.6756
+                 },
+                 {
+                     "Cur_ID": 449,
+                     "Date": "2026-05-02T00:00:00",
+                     "Cur_Abbreviation": "UAH",
+                     "Cur_Scale": 100,
+                     "Cur_Name": "Гривен",
+                     "Cur_OfficialRate": 6.4071
+                 }
+            ]
+            """.replaceAll("\\s", "");
 }
