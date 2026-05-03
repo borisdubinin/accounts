@@ -2,11 +2,11 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.model.CurrencyRate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class FetchCurrencyRatesService {
 

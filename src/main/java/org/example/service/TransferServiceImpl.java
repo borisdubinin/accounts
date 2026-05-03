@@ -76,7 +76,7 @@ public class TransferServiceImpl implements TransferService {
             BigDecimal sentAmount,
             AccountCurrency senderAccountCurrency,
             AccountCurrency receiverAccountCurrency) {
-        if(senderAccountCurrency == receiverAccountCurrency) {
+        if (senderAccountCurrency == receiverAccountCurrency) {
             return sentAmount;
         }
 
