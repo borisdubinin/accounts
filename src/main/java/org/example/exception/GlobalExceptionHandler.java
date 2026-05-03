@@ -1,6 +1,7 @@
 package org.example.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(EntityNotFoundException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(e.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException e) {
         log.error("Illegal argument was received: %s".formatted(e.getMessage()));
@@ -26,5 +33,11 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleInternalError(Exception e) {
+        log.error("Internal error: {}", e.getMessage(), e);
+        return ResponseEntity.internalServerError().build();
     }
 }

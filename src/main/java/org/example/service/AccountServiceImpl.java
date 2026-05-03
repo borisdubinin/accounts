@@ -1,11 +1,15 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.converter.AccountConverter;
+import org.example.converter.AccountEntityAndModelConverter;
 import org.example.entity.AccountEntity;
-import org.example.entity.AccountStatus;
+import org.example.model.AccountSettings;
+import org.example.model.AccountStatus;
+import org.example.exception.EntityNotFoundException;
 import org.example.model.Account;
 import org.example.repository.AccountRepository;
+import org.example.util.IbanGenerator;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,19 +20,43 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
-    private final AccountConverter accountConverter;
+    private final AccountEntityAndModelConverter accountConverter;
 
-    @Transactional
+    @Override
     public Account create(Account account) {
         account.setStatus(AccountStatus.ACTIVE);
+        account.setIban(IbanGenerator.generateIban());
+        setDefaultSettingsIfNeeded(account);
         AccountEntity entity = accountConverter.toEntity(account);
+        entity.getSettings().setAccount(entity);
         AccountEntity newEntity = accountRepository.save(entity);
         return accountConverter.toModel(newEntity);
     }
 
     @Transactional(readOnly = true)
+    @Override
     public List<Account> getAll() {
-        List<AccountEntity> accountEntities = accountRepository.findAll();
+        List<AccountEntity> accountEntities = accountRepository.findAllWithSettings();
         return accountConverter.toModels(accountEntities);
+    }
+
+    @Cacheable(value = "balance")
+    @Transactional(readOnly = true)
+    @Override
+    public Account getByIban(String iban) {
+        AccountEntity accountEntity = accountRepository.findByIban(iban)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Account not found with IBAN: %s".formatted(iban)));
+        return accountConverter.toModel(accountEntity);
+    }
+
+    private void setDefaultSettingsIfNeeded(Account account) {
+        if (account.getSettings() == null) {
+            AccountSettings defaultSettings = new AccountSettings();
+            defaultSettings.setSmsNotificationsEnabled(false);
+            account.setSettings(defaultSettings);
+        } else if (account.getSettings().getSmsNotificationsEnabled() == null) {
+            account.getSettings().setSmsNotificationsEnabled(false);
+        }
     }
 }

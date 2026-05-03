@@ -1,14 +1,10 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.model.AccountCurrency;
+import org.example.model.AccountStatus;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,14 +23,22 @@ public class AccountEntity {
 
     private BigDecimal balance;
 
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private AccountCurrency currency;
 
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
+    private String iban;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, optional = false)
+    private AccountSettingsEntity settings;
+
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

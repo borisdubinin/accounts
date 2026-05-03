@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-account-settings-table
+      author: borisdubinin
+      changes:
+        - createTable:
+            tableName: account_settings
+            columns:
+              - column:
+                  name: account_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: monthly_limit
+                  type: DECIMAL(15,2)
+              - column:
+                  name: sms_notifications_enabled
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+        - sql:
+            sql: |
+              INSERT INTO account_settings (account_id, monthly_limit, sms_notifications_enabled)
+              SELECT id, NULL, false
+              FROM accounts
+
+        - addForeignKeyConstraint:
+            constraintName: fk_account_settings_account
+            baseTableName: account_settings
+            baseColumnNames: account_id
+            referencedTableName: accounts
+            referencedColumnNames: id
