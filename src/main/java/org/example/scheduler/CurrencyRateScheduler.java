@@ -3,7 +3,8 @@ package org.example.scheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.service.FetchCurrencyRatesService;
-import org.springframework.resilience.annotation.Retryable;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +20,13 @@ public class CurrencyRateScheduler {
     @Scheduled(cron = "0 0 0 * * *", zone = "Europe/Minsk")
     @Retryable
     public void fetchAndSaveDailyRates() {
-        try {
-            log.info("Attempt to fetch currency rates (%s)".formatted(LocalDate.now()));
-            fetchCurrencyRatesService.fetchAndSaveDailyRates();
-            log.info("Currency rates (%s) fetched successfully".formatted(LocalDate.now()));
-        } catch(Exception e) {
-            log.error("Failed to fetch currency rates (%s): %s".
-                    formatted(LocalDate.now(), e.getMessage()));
-            throw e;
-        }
+        log.info("Attempt to fetch currency rates (%s)".formatted(LocalDate.now()));
+        fetchCurrencyRatesService.fetchAndSaveDailyRates();
+        log.info("Currency rates (%s) fetched successfully".formatted(LocalDate.now()));
+    }
+
+    @Recover
+    public void recoverFetchRates(Exception e) {
+        log.error("Failed to fetch currency rates (%s): %s".formatted(LocalDate.now(), e.getMessage()));
     }
 }
