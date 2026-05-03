@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class FetchAndSaveDailyCurrencyRatesIT {
+class FetchAndSaveDailyCurrencyRatesIT {
 
     @SuppressWarnings("resource")
     @Container

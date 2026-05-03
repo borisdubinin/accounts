@@ -1,4 +1,4 @@
-package org.example.integration.api;
+package org.example.api;
 
 import org.example.dto.TransferRequestDto;
 import org.example.dto.TransferResponseDto;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TransferApiTest {
+class TransferApiTest {
 
     @SuppressWarnings("resource")
     @Container
