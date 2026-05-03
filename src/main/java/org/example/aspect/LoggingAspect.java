@@ -26,11 +26,11 @@ public class LoggingAspect {
         try {
             Object result = joinPoint.proceed();
             executionTime = System.currentTimeMillis() - start;
-            log.info("Method {} executed in {} ms", methodName, executionTime);
+            log.debug("Method {} executed in {} ms", methodName, executionTime);
             return result;
         } catch (Throwable t) {
             executionTime = System.currentTimeMillis() - start;
-            log.error("Execution of method {} was interrupted after {} ms", methodName, executionTime);
+            log.debug("Execution of method {} was interrupted after {} ms", methodName, executionTime);
             throw t;
         }
     }
