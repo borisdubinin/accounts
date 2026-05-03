@@ -5,9 +5,3 @@ databaseChangeLog:
       file: db/changelog/002-create-currency-rates.yaml
   - include:
       file: db/changelog/003-create-account-settings.yaml
-  - include:
-      file: db/changelog/004-add-settings-foreign-key.yaml
-  - include:
-      file: db/changelog/005-add-uq-account-settings.yaml
-  - include:
-      file: db/changelog/006-account-settings-shared-pk.yaml

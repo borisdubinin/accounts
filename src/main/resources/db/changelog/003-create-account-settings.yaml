@@ -7,8 +7,8 @@ databaseChangeLog:
             tableName: account_settings
             columns:
               - column:
-                  name: id
-                  type: BIGSERIAL
+                  name: account_id
+                  type: BIGINT
                   constraints:
                     primaryKey: true
               - column:
@@ -19,3 +19,16 @@ databaseChangeLog:
                   type: BOOLEAN
                   constraints:
                     nullable: false
+
+        - sql:
+            sql: |
+              INSERT INTO account_settings (account_id, monthly_limit, sms_notifications_enabled)
+              SELECT id, NULL, false
+              FROM accounts
+
+        - addForeignKeyConstraint:
+            constraintName: fk_account_settings_account
+            baseTableName: account_settings
+            baseColumnNames: account_id
+            referencedTableName: accounts
+            referencedColumnNames: id
