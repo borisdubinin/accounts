@@ -2,13 +2,16 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.annotation.LogExecutionTime;
+import org.example.converter.TransferEntityAndModelConverter;
 import org.example.entity.AccountEntity;
+import org.example.entity.TransferEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
 import org.example.model.AccountStatus;
 import org.example.model.CurrencyRate;
 import org.example.model.Transfer;
 import org.example.repository.AccountRepository;
+import org.example.repository.TransferRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,8 @@ public class TransferServiceImpl implements TransferService {
     private static final int AMOUNT_SCALE = 2;
 
     private final AccountRepository accountRepository;
+    private final TransferRepository transferRepository;
+    private final TransferEntityAndModelConverter transferConverter;
     private final CurrencyRateService currencyRateService;
 
     @Override
@@ -46,15 +51,14 @@ public class TransferServiceImpl implements TransferService {
         sender.setBalance(senderFinalBalance);
         receiver.setBalance(receiverFinalBalance);
 
-        return Transfer.builder()
-                .ibanFrom(sender.getIban())
-                .senderBalance(sender.getBalance())
-                .senderCurrency(sender.getCurrency())
-                .sentAmount(transfer.getSentAmount())
-                .ibanTo(receiver.getIban())
-                .receiverBalance(receiver.getBalance())
-                .receiverCurrency(receiver.getCurrency())
-                .build();
+        transfer.setSenderBalance(senderFinalBalance);
+        transfer.setReceiverBalance(receiverFinalBalance);
+        transfer.setSenderCurrency(sender.getCurrency());
+        transfer.setReceiverCurrency(receiver.getCurrency());
+
+        TransferEntity entity = transferConverter.toEntity(transfer);
+        TransferEntity performedTransferEntity = transferRepository.save(entity);
+        return transferConverter.toModel(performedTransferEntity);
     }
 
     private void validateBeforeTransfer(AccountEntity sender, AccountEntity receiver, Transfer transfer) {

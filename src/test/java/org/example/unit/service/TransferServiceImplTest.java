@@ -1,5 +1,6 @@
 package org.example.unit.service;
 
+import org.example.converter.TransferEntityAndModelConverter;
 import org.example.entity.AccountEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.AccountCurrency;
@@ -7,6 +8,7 @@ import org.example.model.AccountStatus;
 import org.example.model.CurrencyRate;
 import org.example.model.Transfer;
 import org.example.repository.AccountRepository;
+import org.example.repository.TransferRepository;
 import org.example.service.CurrencyRateService;
 import org.example.service.TransferServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -32,6 +35,12 @@ class TransferServiceImplTest {
 
     @Mock
     private CurrencyRateService currencyRateService;
+
+    @Mock
+    private TransferRepository transferRepository;
+
+    @Spy
+    private TransferEntityAndModelConverter transferConverter;
 
     @InjectMocks
     private TransferServiceImpl transferService;
@@ -80,6 +89,7 @@ class TransferServiceImplTest {
         receiver.setCurrency(AccountCurrency.USD);
         when(accountRepository.findByIbanWithLock("IBAN1111111111111111111111111111")).thenReturn(Optional.of(sender));
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -100,6 +110,7 @@ class TransferServiceImplTest {
         receiver.setCurrency(AccountCurrency.BYN);
         when(accountRepository.findByIbanWithLock("IBAN1111111111111111111111111111")).thenReturn(Optional.of(sender));
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -114,6 +125,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.USD)).thenReturn(usdRate);
         when(currencyRateService.getTodayRate(AccountCurrency.EUR)).thenReturn(eurRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -132,6 +144,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN1111111111111111111111111111")).thenReturn(Optional.of(sender));
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.EUR)).thenReturn(eurRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -149,6 +162,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN1111111111111111111111111111")).thenReturn(Optional.of(sender));
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.USD)).thenReturn(usdRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -239,6 +253,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.USD)).thenReturn(usdRate);
         when(currencyRateService.getTodayRate(AccountCurrency.EUR)).thenReturn(eurRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         transferService.performTransfer(transfer);
 
@@ -253,6 +268,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.USD)).thenReturn(usdRate);
         when(currencyRateService.getTodayRate(AccountCurrency.EUR)).thenReturn(eurRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -278,6 +294,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN1111111111111111111111111111")).thenReturn(Optional.of(sender));
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.RUB)).thenReturn(rubRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 
@@ -297,6 +314,7 @@ class TransferServiceImplTest {
         when(accountRepository.findByIbanWithLock("IBAN9999999999999999999999999999")).thenReturn(Optional.of(receiver));
         when(currencyRateService.getTodayRate(AccountCurrency.USD)).thenReturn(preciseRate);
         when(currencyRateService.getTodayRate(AccountCurrency.EUR)).thenReturn(eurRate);
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Transfer result = transferService.performTransfer(transfer);
 

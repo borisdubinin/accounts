@@ -9,6 +9,7 @@ import org.example.model.AccountCurrency;
 import org.example.model.AccountStatus;
 import org.example.repository.AccountRepository;
 import org.example.repository.CurrencyRateRepository;
+import org.example.repository.TransferRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ class TransferApiTest {
     private AccountRepository accountRepository;
 
     @Autowired
+    private TransferRepository transferRepository;
+
+    @Autowired
     private CurrencyRateRepository currencyRateRepository;
 
     @LocalServerPort
@@ -66,6 +70,7 @@ class TransferApiTest {
                 .build();
 
         accountRepository.deleteAll();
+        transferRepository.deleteAll();
         currencyRateRepository.deleteAll();
 
         LocalDate today = LocalDate.now();

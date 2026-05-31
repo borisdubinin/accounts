@@ -40,4 +40,11 @@ public class TransferController {
         Transfer performedTransfer = transferService.performTransfer(transfer);
         return transferConverter.toDto(performedTransfer);
     }
+
+    /*
+        TODO Добавить таблицы transfers и users
+        - получение выписки за период
+        - список избранных платежей
+        - регистрация и авторизация
+    */
 }
