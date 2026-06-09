@@ -19,6 +19,7 @@ public class TransferEntityAndModelConverter implements
                 .receiverCurrency(entity.getReceiverCurrency())
                 .senderBalance(entity.getSenderBalance())
                 .receiverBalance(entity.getReceiverBalance())
+                .dateTime(entity.getCreatedAt())
                 .build();
     }
 

@@ -29,6 +29,7 @@ public class TransferModelAndDtoConverter implements
         dto.setIbanTo(transfer.getIbanTo());
         dto.setReceiverBalance(transfer.getReceiverBalance());
         dto.setReceiverCurrency(transfer.getReceiverCurrency());
+        dto.setDateTime(transfer.getDateTime());
         return dto;
     }
 }

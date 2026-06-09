@@ -7,12 +7,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.converter.FavoriteTransferModelAndDtoConverter;
 import org.example.converter.TransferModelAndDtoConverter;
-import org.example.dto.TransferRequestDto;
-import org.example.dto.TransferResponseDto;
+import org.example.dto.*;
+import org.example.model.FavoriteTransfer;
 import org.example.model.Transfer;
 import org.example.service.TransferService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "Transfers management", description = "API for transfers management")
 @RestController
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class TransferController {
 
     private final TransferModelAndDtoConverter transferConverter;
+    private final FavoriteTransferModelAndDtoConverter favoriteTransferConverter;
     private final TransferService transferService;
 
     @Operation(
@@ -41,10 +47,33 @@ public class TransferController {
         return transferConverter.toDto(performedTransfer);
     }
 
-    /*
-        TODO Добавить таблицы transfers и users
-        - получение выписки за период
-        - список избранных платежей
-        - регистрация и авторизация
-    */
+    @GetMapping("/statement/{iban}")
+    public List<TransferResponseDto> getStatement(
+            @PathVariable("iban") String iban,
+            @RequestParam("from") LocalDate from,
+            @RequestParam("to") LocalDate to) {
+        List<Transfer> statement = transferService.getStatement(iban, from, to);
+        return transferConverter.toDtos(statement);
+    }
+
+    @PostMapping("/favorite")
+    @ResponseStatus(HttpStatus.CREATED)
+    public FavoriteTransferResponseDto createFavorite(
+            @Valid @RequestBody CreateFavoriteTransferRequestDto createFavoriteTransferRequestDto) {
+        FavoriteTransfer favoriteTransfer = favoriteTransferConverter.toModel(createFavoriteTransferRequestDto);
+        FavoriteTransfer newFavoriteTransfer = transferService.createFavorite(favoriteTransfer);
+        return favoriteTransferConverter.toDto(newFavoriteTransfer);
+    }
+
+    @DeleteMapping("/favorite/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFavorite(@PathVariable("id") Long id) {
+        transferService.deleteFavoriteById(id);
+    }
+
+    @GetMapping("/favorite")
+    public List<FavoriteTransferResponseDto> getAllFavorite() {
+        List<FavoriteTransfer> models = transferService.getAllFavorite();
+        return favoriteTransferConverter.toDtos(models);
+    }
 }

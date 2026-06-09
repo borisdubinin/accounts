@@ -16,7 +16,6 @@ databaseChangeLog:
                   name: iban_from
                   type: VARCHAR(32)
                   constraints:
-                    unique: true
                     nullable: false
 
               - column:
@@ -41,7 +40,6 @@ databaseChangeLog:
                   name: iban_to
                   type: VARCHAR(32)
                   constraints:
-                    unique: true
                     nullable: false
 
               - column:
@@ -61,4 +59,3 @@ databaseChangeLog:
                   type: TIMESTAMP
                   constraints:
                     nullable: false
-

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,4 +19,5 @@ public class Transfer {
     private String ibanTo;
     private BigDecimal receiverBalance;
     private AccountCurrency receiverCurrency;
+    private LocalDateTime dateTime;
 }

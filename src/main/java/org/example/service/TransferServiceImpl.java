@@ -2,15 +2,15 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.annotation.LogExecutionTime;
+import org.example.converter.FavoriteTransferEntityAndModelConverter;
 import org.example.converter.TransferEntityAndModelConverter;
 import org.example.entity.AccountEntity;
+import org.example.entity.FavoriteTransferEntity;
 import org.example.entity.TransferEntity;
 import org.example.exception.EntityNotFoundException;
-import org.example.model.AccountCurrency;
-import org.example.model.AccountStatus;
-import org.example.model.CurrencyRate;
-import org.example.model.Transfer;
+import org.example.model.*;
 import org.example.repository.AccountRepository;
+import org.example.repository.FavoriteTransferRepository;
 import org.example.repository.TransferRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -28,7 +31,9 @@ public class TransferServiceImpl implements TransferService {
 
     private final AccountRepository accountRepository;
     private final TransferRepository transferRepository;
+    private final FavoriteTransferRepository favoriteTransferRepository;
     private final TransferEntityAndModelConverter transferConverter;
+    private final FavoriteTransferEntityAndModelConverter favoriteTransferConverter;
     private final CurrencyRateService currencyRateService;
 
     @Override
@@ -59,6 +64,37 @@ public class TransferServiceImpl implements TransferService {
         TransferEntity entity = transferConverter.toEntity(transfer);
         TransferEntity performedTransferEntity = transferRepository.save(entity);
         return transferConverter.toModel(performedTransferEntity);
+    }
+
+    @Override
+    public List<Transfer> getStatement(String iban, LocalDate from, LocalDate to) {
+        if (accountRepository.findByIban(iban).isEmpty()) {
+            throw new EntityNotFoundException("Account not found with IBAN: %s".formatted(iban));
+        }
+
+        LocalDateTime fromDateTime = from.atStartOfDay();
+        LocalDateTime toDateTime = to.atTime(23, 59, 59);
+
+        List<TransferEntity> transferEntities = transferRepository.findByIbanAndDateRange(iban, fromDateTime, toDateTime);
+        return transferConverter.toModels(transferEntities);
+    }
+
+    @Override
+    public FavoriteTransfer createFavorite(FavoriteTransfer favoriteTransfer) {
+        FavoriteTransferEntity entity = favoriteTransferConverter.toEntity(favoriteTransfer);
+        FavoriteTransferEntity newEntity = favoriteTransferRepository.save(entity);
+        return favoriteTransferConverter.toModel(newEntity);
+    }
+
+    @Override
+    public void deleteFavoriteById(Long id) {
+        favoriteTransferRepository.deleteById(id);
+    }
+
+    @Override
+    public List<FavoriteTransfer> getAllFavorite() {
+        List<FavoriteTransferEntity> entities = favoriteTransferRepository.findAll();
+        return favoriteTransferConverter.toModels(entities);
     }
 
     private void validateBeforeTransfer(AccountEntity sender, AccountEntity receiver, Transfer transfer) {

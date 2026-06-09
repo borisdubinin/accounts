@@ -69,8 +69,7 @@ public class AccountController {
             })
     @LogExecutionTime
     @GetMapping("/balance")
-    public GetBalanceResponseDto getBalance(@Valid @RequestBody GetBalanceRequestDto getBalanceRequestDto) {
-        String iban = getBalanceRequestDto.getIban();
+    public GetBalanceResponseDto getBalance(@RequestParam("iban") String iban) {
         Account account = accountService.getByIban(iban);
         return new GetBalanceResponseDto(account.getBalance(), account.getCurrency());
     }
