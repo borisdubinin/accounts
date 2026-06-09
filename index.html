@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BankAdmin — Панель управления</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sidebar-w: 220px;
+    --header-h: 56px;
+    --font: 'IBM Plex Mono', monospace;
+    --accent: #1D9E75;
+    --accent-light: #E1F5EE;
+    --accent-dark: #085041;
+    --danger: #E24B4A;
+    --danger-light: #FCEBEB;
+    --warn: #EF9F27;
+    --warn-light: #FAEEDA;
+    --info: #378ADD;
+    --info-light: #E6F1FB;
+    --bg: #f5f5f3;
+    --bg-card: #ffffff;
+    --bg-secondary: #f1efea;
+    --text: #1a1a18;
+    --text-secondary: #6b6b66;
+    --text-tertiary: #a0a09a;
+    --border: rgba(0,0,0,0.10);
+    --border-secondary: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --bg-card: #242422;
+      --bg-secondary: #2c2c2a;
+      --text: #f0efea;
+      --text-secondary: #999990;
+      --text-tertiary: #666660;
+      --border: rgba(255,255,255,0.10);
+      --border-secondary: rgba(255,255,255,0.18);
+      --accent-light: #04342C;
+      --accent-dark: #9FE1CB;
+      --danger-light: #501313;
+      --warn-light: #412402;
+      --info-light: #042C53;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  button { font-family: var(--font); cursor: pointer; }
+  input, select, textarea { font-family: var(--font); }
+
+  /* ── Layout ── */
+  .shell { display: flex; height: 100vh; overflow: hidden; }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-card);
+    border-right: 0.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar {
+    height: var(--header-h);
+    background: var(--bg-card);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* ── Sidebar ── */
+  .sb-logo {
+    padding: 16px 20px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sb-logo-mark {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .sb-logo-text { font-size: 12px; font-weight: 500; line-height: 1.3; }
+  .sb-logo-sub { font-size: 10px; color: var(--text-tertiary); }
+
+  .sb-section {
+    padding: 12px 12px 4px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+
+  .sb-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    margin: 1px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: background .15s, color .15s;
+    border: none; background: none;
+    width: calc(100% - 16px); text-align: left;
+  }
+
+  .sb-item i { font-size: 16px; width: 16px; flex-shrink: 0; }
+  .sb-item:hover { background: var(--bg-secondary); color: var(--text); }
+  .sb-item.active { background: var(--accent-light); color: var(--accent-dark); font-weight: 500; }
+  .sb-item.active i { color: var(--accent); }
+
+  /* ── Topbar ── */
+  .tb-title { font-size: 15px; font-weight: 500; flex: 1; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 0.5px solid var(--border);
+    padding-bottom: 0;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    font-size: 12px; font-family: var(--font);
+    color: var(--text-secondary);
+    background: none; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -0.5px;
+    transition: color .15s, border-color .15s;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent-dark); border-bottom-color: var(--accent); font-weight: 500; }
+
+  /* ── Metrics ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .metric {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+  }
+
+  .metric-label {
+    font-size: 11px; color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .metric-label i { font-size: 14px; }
+  .metric-val { font-size: 22px; font-weight: 500; }
+  .metric-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+  /* ── Card / Table ── */
+  .card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .card-header-title { font-size: 13px; font-weight: 500; flex: 1; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+
+  th {
+    text-align: left;
+    padding: 10px 20px;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-tertiary);
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg-secondary);
+  }
+
+  td {
+    padding: 11px 20px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-secondary); }
+  .mono { font-family: var(--font); font-size: 11px; color: var(--text-secondary); }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px; font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge-green  { background: #EAF3DE; color: #27500A; }
+  .badge-red    { background: #FCEBEB; color: #791F1F; }
+  .badge-amber  { background: #FAEEDA; color: #633806; }
+  .badge-gray   { background: var(--bg-secondary); color: var(--text-secondary); border: 0.5px solid var(--border); }
+  .badge-blue   { background: #E6F1FB; color: #0C447C; }
+  .badge-teal   { background: #E1F5EE; color: #085041; }
+
+  @media (prefers-color-scheme: dark) {
+    .badge-green  { background: #173404; color: #C0DD97; }
+    .badge-red    { background: #501313; color: #F7C1C1; }
+    .badge-amber  { background: #412402; color: #FAC775; }
+    .badge-blue   { background: #042C53; color: #B5D4F4; }
+    .badge-teal   { background: #04342C; color: #9FE1CB; }
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px; font-family: var(--font);
+    border: 0.5px solid var(--border-secondary);
+    background: var(--bg-card); color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .btn:hover { background: var(--bg-secondary); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: #0F6E56; border-color: #0F6E56; }
+  .btn-danger { background: var(--danger-light); color: #791F1F; border-color: #F7C1C1; }
+  .btn-danger:hover { background: #F7C1C1; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+  .btn i { font-size: 14px; }
+
+  /* ── Forms ── */
+  .form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-single { margin-bottom: 12px; }
+
+  .form-label {
+    font-size: 11px; color: var(--text-secondary);
+    margin-bottom: 5px; display: block;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 0.5px solid var(--border-secondary);
+    border-radius: 6px;
+    font-size: 12px; font-family: var(--font);
+    background: var(--bg-card); color: var(--text);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(29,158,117,0.15); }
+  select.form-input { cursor: pointer; }
+
+  .form-section {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .form-section-title {
+    font-size: 12px; font-weight: 500;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .form-section-title i { font-size: 16px; color: var(--accent); }
+  .form-actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 4px; }
+
+  /* ── Alerts ── */
+  .alert {
+    padding: 12px 16px; border-radius: var(--radius-md);
+    font-size: 12px;
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .alert i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-success { background: #EAF3DE; color: #27500A; }
+  .alert-error   { background: #FCEBEB; color: #791F1F; }
+  .alert-info    { background: #E6F1FB; color: #0C447C; }
+
+  /* ── Empty state ── */
+  .empty { text-align: center; padding: 40px 20px; color: var(--text-tertiary); }
+  .empty i { font-size: 32px; display: block; margin-bottom: 8px; }
+  .empty-text { font-size: 12px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.4);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 100;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border-secondary);
+    width: 480px;
+    max-height: 80vh; overflow-y: auto;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .modal-header-title { font-size: 14px; font-weight: 500; flex: 1; }
+
+  .modal-body { padding: 20px; }
+
+  .modal-close {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-secondary); padding: 4px; border-radius: 4px;
+  }
+
+  .modal-close:hover { color: var(--text); background: var(--bg-secondary); }
+
+  /* ── Notifications ── */
+  .notif {
+    position: fixed; top: 16px; right: 16px; z-index: 200;
+    display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none;
+  }
+
+  .notif-item {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    padding: 12px 16px; font-size: 12px;
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: all;
+    animation: slideIn .2s ease;
+    max-width: 320px;
+  }
+
+  .notif-item i { font-size: 16px; flex-shrink: 0; }
+  .notif-item.success i { color: var(--accent); }
+  .notif-item.error i { color: var(--danger); }
+
+  @keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+
+  /* ── Misc ── */
+  .iban-display {
+    font-family: var(--font);
+    font-size: 10px;
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 7px;
+    letter-spacing: 0.04em;
+    display: inline-block;
+  }
+
+  .row-actions { display: flex; gap: 6px; align-items: center; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .btn-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; padding: 0;
+    border-radius: 5px;
+    font-size: 14px;
+    border: 0.5px solid var(--border);
+    background: none; color: var(--text-tertiary);
+    cursor: pointer; transition: background .15s, color .15s;
+    flex-shrink: 0;
+  }
+  .btn-icon:hover { background: var(--bg-secondary); color: var(--text); }
+  .btn-icon.copied { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+
+  .iban-cell { display: flex; align-items: center; gap: 6px; }
+
+  /* Non-blocking favorite panel */
+  .fav-panel {
+    position: fixed;
+    top: calc(var(--header-h) + 16px);
+    right: 16px;
+    width: 340px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    z-index: 90;
+    display: none;
+  }
+  .fav-panel.open { display: block; }
+  .fav-panel-header {
+    padding: 14px 16px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .fav-panel-title { font-size: 13px; font-weight: 500; flex: 1; }
+  .fav-panel-body { padding: 16px; }
+
+  .iban-counter { font-size: 10px; color: var(--text-tertiary); margin-top: 3px; display: block; }
+  .iban-counter.ok { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="notif" id="notifContainer"></div>
+
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <nav class="sidebar" aria-label="Навигация">
+    <div class="sb-logo">
+      <div class="sb-logo-mark" aria-hidden="true">B</div>
+      <div>
+        <div class="sb-logo-text">BankAdmin</div>
+        <div class="sb-logo-sub">Панель управления</div>
+      </div>
+    </div>
+
+    <div class="sb-section">Счета</div>
+    <button class="sb-item active" id="nav-accounts-list" onclick="nav('accounts-list')">
+      <i class="ti ti-wallet" aria-hidden="true"></i> Все счета
+    </button>
+    <button class="sb-item" id="nav-accounts-create" onclick="nav('accounts-create')">
+      <i class="ti ti-plus" aria-hidden="true"></i> Создать счёт
+    </button>
+
+    <div class="sb-section">Переводы</div>
+    <button class="sb-item" id="nav-transfers-new" onclick="nav('transfers-new')">
+      <i class="ti ti-arrow-right" aria-hidden="true"></i> Новый перевод
+    </button>
+    <button class="sb-item" id="nav-transfers-statement" onclick="nav('transfers-statement')">
+      <i class="ti ti-file-text" aria-hidden="true"></i> Выписка
+    </button>
+    <button class="sb-item" id="nav-transfers-favorites" onclick="nav('transfers-favorites')">
+      <i class="ti ti-star" aria-hidden="true"></i> Избранные
+    </button>
+
+    <div class="sb-section">Карты</div>
+    <button class="sb-item" id="nav-cards-list" onclick="nav('cards-list')">
+      <i class="ti ti-credit-card" aria-hidden="true"></i> Все карты
+    </button>
+    <button class="sb-item" id="nav-cards-create" onclick="nav('cards-create')">
+      <i class="ti ti-plus" aria-hidden="true"></i> Выпустить карту
+    </button>
+
+    <div style="flex:1"></div>
+    <div style="padding:12px 16px; border-top: 0.5px solid var(--border)">
+      <div style="font-size:10px; color:var(--text-tertiary); margin-bottom:4px">
+      Accounts &amp; Transfers
+      </div>
+      <input id="baseBankingInput" class="form-input" style="font-size:11px; padding:5px 8px; margin-bottom:8px"
+      placeholder="http://localhost:8081" oninput="BASE_BANKING = this.value.trim().replace(/\/$/, '')">
+      <div style="font-size:10px; color:var(--text-tertiary); margin-bottom:4px">Cards</div>
+      <input id="baseCardsInput" class="form-input" style="font-size:11px; padding:5px 8px"
+      placeholder="http://localhost:8080" oninput="BASE_CARDS = this.value.trim().replace(/\/$/, '')">
+      </div>
+  </nav>
+
+  <!-- ══ MAIN ══ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <span class="tb-title" id="pageTitle">Все счета</span>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ─── ACCOUNTS LIST ─── -->
+      <section class="section active" id="section-accounts-list">
+        <div class="metrics" id="accountMetrics">
+          <div class="metric">
+            <div class="metric-label"><i class="ti ti-wallet" aria-hidden="true"></i>Счетов всего</div>
+            <div class="metric-val" id="m-total">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label"><i class="ti ti-check" aria-hidden="true"></i>Активных</div>
+            <div class="metric-val" id="m-active">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label"><i class="ti ti-currency-dollar" aria-hidden="true"></i>Валюты</div>
+            <div class="metric-val" id="m-currencies" style="font-size:14px; padding-top:4px">—</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-header-title">Счета</span>
+            <button class="btn btn-sm" onclick="loadAccounts()">
+              <i class="ti ti-refresh" aria-hidden="true"></i>Обновить
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="nav('accounts-create')">
+              <i class="ti ti-plus" aria-hidden="true"></i>Создать
+            </button>
+          </div>
+          <div id="accountsTableWrap">
+            <div class="empty">
+              <i class="ti ti-loader" aria-hidden="true"></i>
+              <div class="empty-text">Загрузка...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── ACCOUNTS CREATE ─── -->
+      <section class="section" id="section-accounts-create">
+        <div class="form-section">
+          <div class="form-section-title">
+            <i class="ti ti-wallet" aria-hidden="true"></i>Создать счёт
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="acc-balance">Начальный баланс *</label>
+              <input type="number" id="acc-balance" class="form-input"
+                     placeholder="0.00" min="0" step="0.01">
+            </div>
+            <div>
+              <label class="form-label" for="acc-currency">Валюта *</label>
+              <select id="acc-currency" class="form-input">
+                <option value="">— выбрать —</option>
+                <option>BYN</option>
+                <option>RUB</option>
+                <option>USD</option>
+                <option>EUR</option>
+              </select>
+            </div>
+          </div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-bottom:12px; font-weight:500">
+            Настройки (необязательно)
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="acc-limit">Месячный лимит</label>
+              <input type="number" id="acc-limit" class="form-input"
+                     placeholder="без лимита" min="0" step="0.01">
+            </div>
+            <div>
+              <label class="form-label" for="acc-sms">SMS-уведомления</label>
+              <select id="acc-sms" class="form-input">
+                <option value="false">Выключено</option>
+                <option value="true">Включено</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn" onclick="nav('accounts-list')">Отмена</button>
+            <button class="btn btn-primary" onclick="createAccount()">
+              <i class="ti ti-check" aria-hidden="true"></i>Создать счёт
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── TRANSFERS NEW ─── -->
+      <section class="section" id="section-transfers-new">
+        <div class="form-section">
+          <div class="form-section-title">
+            <i class="ti ti-arrow-right" aria-hidden="true"></i>Новый перевод
+          </div>
+          <div class="form-single">
+            <label class="form-label" for="tr-from">IBAN отправителя * (32 символа)</label>
+            <input id="tr-from" class="form-input" placeholder="IBAN..." maxlength="32"
+                   oninput="updateIbanCount('tr-from','tr-from-count')">
+            <span id="tr-from-count" class="iban-counter">0/32</span>
+          </div>
+          <div class="form-single">
+            <label class="form-label" for="tr-to">IBAN получателя * (32 символа)</label>
+            <input id="tr-to" class="form-input" placeholder="IBAN..." maxlength="32"
+                   oninput="updateIbanCount('tr-to','tr-to-count')">
+            <span id="tr-to-count" class="iban-counter">0/32</span>
+          </div>
+          <div class="form-single">
+            <label class="form-label" for="tr-amount">Сумма *</label>
+            <input type="number" id="tr-amount" class="form-input"
+                   placeholder="0.00" min="0.01" step="0.01">
+          </div>
+          <div class="form-actions">
+            <button class="btn" onclick="nav('accounts-list')">Отмена</button>
+            <button class="btn btn-primary" onclick="performTransfer()">
+              <i class="ti ti-send" aria-hidden="true"></i>Выполнить перевод
+            </button>
+          </div>
+        </div>
+        <div id="transferResult"></div>
+      </section>
+
+      <!-- ─── TRANSFERS STATEMENT ─── -->
+      <section class="section" id="section-transfers-statement">
+        <div class="form-section">
+          <div class="form-section-title">
+            <i class="ti ti-file-text" aria-hidden="true"></i>Выписка по счёту
+          </div>
+          <div class="form-single">
+            <label class="form-label" for="st-iban">IBAN счёта *</label>
+            <input id="st-iban" class="form-input" placeholder="IBAN..." maxlength="32">
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="st-from">Начало периода *</label>
+              <input type="date" id="st-from" class="form-input">
+            </div>
+            <div>
+              <label class="form-label" for="st-to">Конец периода *</label>
+              <input type="date" id="st-to" class="form-input">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="loadStatement()">
+              <i class="ti ti-search" aria-hidden="true"></i>Получить выписку
+            </button>
+          </div>
+        </div>
+        <div id="statementResult"></div>
+      </section>
+
+      <!-- ─── TRANSFERS FAVORITES ─── -->
+      <section class="section" id="section-transfers-favorites">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-header-title">Избранные переводы</span>
+            <button class="btn btn-sm" onclick="loadFavorites()">
+              <i class="ti ti-refresh" aria-hidden="true"></i>Обновить
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openFavModal()">
+              <i class="ti ti-plus" aria-hidden="true"></i>Добавить
+            </button>
+          </div>
+          <div id="favoritesTableWrap">
+            <div class="empty">
+              <i class="ti ti-loader" aria-hidden="true"></i>
+              <div class="empty-text">Загрузка...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── CARDS LIST ─── -->
+      <section class="section" id="section-cards-list">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-header-title">Карты</span>
+            <button class="btn btn-sm" onclick="loadCards()">
+              <i class="ti ti-refresh" aria-hidden="true"></i>Обновить
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="nav('cards-create')">
+              <i class="ti ti-plus" aria-hidden="true"></i>Выпустить
+            </button>
+          </div>
+          <div id="cardsTableWrap">
+            <div class="empty">
+              <i class="ti ti-loader" aria-hidden="true"></i>
+              <div class="empty-text">Загрузка...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── CARDS CREATE ─── -->
+      <section class="section" id="section-cards-create">
+        <div class="form-section">
+          <div class="form-section-title">
+            <i class="ti ti-credit-card" aria-hidden="true"></i>Выпустить карту
+          </div>
+          <div class="form-single">
+            <label class="form-label" for="card-holder">Имя держателя *</label>
+            <input id="card-holder" class="form-input" placeholder="IVAN IVANOV">
+          </div>
+          <div class="form-single">
+            <label class="form-label" for="card-iban">IBAN счёта * (32 символа)</label>
+            <input id="card-iban" class="form-input" placeholder="IBAN..." maxlength="32"
+                   oninput="updateIbanCount('card-iban','card-iban-count')">
+            <span id="card-iban-count" class="iban-counter">0/32</span>
+          </div>
+          <div class="form-actions">
+            <button class="btn" onclick="nav('cards-list')">Отмена</button>
+            <button class="btn btn-primary" onclick="createCard()">
+              <i class="ti ti-check" aria-hidden="true"></i>Выпустить карту
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ══ PANEL: Add Favorite (non-blocking) ══ -->
+<div class="fav-panel" id="favPanel" role="complementary" aria-label="Добавить избранный перевод">
+  <div class="fav-panel-header">
+    <i class="ti ti-star" aria-hidden="true" style="color:var(--accent);font-size:16px"></i>
+    <span class="fav-panel-title">Избранный перевод</span>
+    <button class="modal-close" onclick="closeFavPanel()" aria-label="Закрыть">
+      <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
+  </div>
+  <div class="fav-panel-body">
+    <div class="form-single">
+      <label class="form-label" for="fav-from">IBAN отправителя * (32)</label>
+      <input id="fav-from" class="form-input" maxlength="32"
+             oninput="updateIbanCount('fav-from','fav-from-c')">
+      <span id="fav-from-c" class="iban-counter">0/32</span>
+    </div>
+    <div class="form-single">
+      <label class="form-label" for="fav-to">IBAN получателя * (32)</label>
+      <input id="fav-to" class="form-input" maxlength="32"
+             oninput="updateIbanCount('fav-to','fav-to-c')">
+      <span id="fav-to-c" class="iban-counter">0/32</span>
+    </div>
+    <div class="form-single">
+      <label class="form-label" for="fav-amount">Сумма *</label>
+      <input type="number" id="fav-amount" class="form-input"
+             min="0.01" step="0.01" placeholder="0.00">
+    </div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeFavPanel()">Отмена</button>
+      <button class="btn btn-primary" onclick="createFavorite()">
+        <i class="ti ti-star" aria-hidden="true"></i>Сохранить
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Change Card Status ══ -->
+<div class="modal-overlay" id="cardStatusModal" role="dialog" aria-modal="true"
+     aria-labelledby="csModalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-header-title" id="csModalTitle">Изменить статус карты</span>
+      <button class="modal-close" onclick="closeCardStatusModal()" aria-label="Закрыть">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-single">
+        <label class="form-label">Карта #<span id="cs-id"></span></label>
+        <input class="form-input" id="cs-num" disabled
+               style="background:var(--bg-secondary); opacity:.7">
+      </div>
+      <div class="form-single">
+        <label class="form-label" for="cs-status">Новый статус *</label>
+        <select id="cs-status" class="form-input">
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="BLOCKED">BLOCKED</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn" onclick="closeCardStatusModal()">Отмена</button>
+        <button class="btn btn-primary" onclick="changeCardStatus()">
+          <i class="ti ti-check" aria-hidden="true"></i>Применить
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let pendingCardId = null;
+
+const BASIC_AUTH = 'Basic ' + btoa('user:user123');
+
+const PAGE_TITLES = {
+  'accounts-list':      'Все счета',
+  'accounts-create':    'Создать счёт',
+  'transfers-new':      'Новый перевод',
+  'transfers-statement':'Выписка',
+  'transfers-favorites':'Избранные переводы',
+  'cards-list':         'Все карты',
+  'cards-create':       'Выпустить карту',
+};
+
+/* ════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════ */
+function nav(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+
+  const section = document.getElementById('section-' + id);
+  const navBtn  = document.getElementById('nav-' + id);
+  if (section) section.classList.add('active');
+  if (navBtn)  navBtn.classList.add('active');
+
+  document.getElementById('pageTitle').textContent = PAGE_TITLES[id] || id;
+
+  if (id === 'accounts-list')      loadAccounts();
+  if (id === 'transfers-favorites') loadFavorites();
+  if (id === 'cards-list')          loadCards();
+}
+
+/* ════════════════════════════════════════════
+   NOTIFICATIONS
+════════════════════════════════════════════ */
+function notify(msg, type = 'success') {
+  const container = document.getElementById('notifContainer');
+  const el = document.createElement('div');
+  el.className = `notif-item ${type}`;
+  el.setAttribute('role', 'alert');
+  el.innerHTML = `<i class="ti ti-${type === 'success' ? 'check' : 'alert-circle'}" aria-hidden="true"></i>
+                  <span>${escHtml(msg)}</span>`;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function updateIbanCount(inputId, spanId) {
+  const len = document.getElementById(inputId).value.length;
+  const span = document.getElementById(spanId);
+  span.textContent = len + '/32';
+  span.classList.toggle('ok', len === 32);
+}
+
+function statusBadge(s) {
+  const map = {
+    ACTIVE:  'badge-green',
+    BLOCKED: 'badge-red',
+  };
+  return `<span class="badge ${map[s] || 'badge-gray'}">${escHtml(s || '—')}</span>`;
+}
+
+function currBadge(c) {
+  return `<span class="badge badge-teal">${escHtml(c || '—')}</span>`;
+}
+
+function fmt(n) {
+  return n != null ? Number(n).toFixed(2) : '—';
+}
+
+/* ════════════════════════════════════════════
+   API
+════════════════════════════════════════════ */
+// service: 'banking' (8081) | 'cards' (8080)
+async function apiFetch(service, path, opts = {}) {
+  const base    = service === 'cards' ? BASE_CARDS : BASE_BANKING;
+  const url     = base + path;
+  const headers = { 'Content-Type': 'application/json' };
+  if (service !== 'cards') headers['Authorization'] = BASIC_AUTH;
+  const res = await fetch(url, { headers, ...opts });
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { const t = await res.text(); if (t) msg += ': ' + t; } catch (_) {}
+    throw new Error(msg);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+/* ════════════════════════════════════════════
+   ACCOUNTS
+════════════════════════════════════════════ */
+async function loadAccounts() {
+  const wrap = document.getElementById('accountsTableWrap');
+  wrap.innerHTML = '<div class="empty"><i class="ti ti-loader" aria-hidden="true"></i><div class="empty-text">Загрузка...</div></div>';
+  try {
+    const data = await apiFetch('banking', '/accounts');
+
+    // Metrics
+    document.getElementById('m-total').textContent = data.length;
+    document.getElementById('m-active').textContent =
+      data.filter(a => a.status === 'ACTIVE').length;
+    const currencies = [...new Set(data.map(a => a.currency).filter(Boolean))];
+    document.getElementById('m-currencies').textContent =
+      currencies.length ? currencies.join(', ') : '—';
+
+    if (!data.length) {
+      wrap.innerHTML = '<div class="empty"><i class="ti ti-inbox" aria-hidden="true"></i><div class="empty-text">Счетов нет</div></div>';
+      return;
+    }
+
+    const rows = data.map(a => {
+      const copyBtn = a.iban
+        ? '<button class="btn-icon" title="Копировать IBAN" onclick="copyIban(\'' + escHtml(a.iban) + '\', this)">'
+          + '<i class="ti ti-copy" aria-hidden="true"></i></button>'
+        : '';
+      const smsCell = a.settings?.smsNotificationsEnabled
+        ? '<span class="badge badge-green">вкл</span>'
+        : '<span class="badge badge-gray">выкл</span>';
+      return `<tr>
+        <td class="mono">${escHtml(String(a.id))}</td>
+        <td><div class="iban-cell"><span class="iban-display">${escHtml(a.iban || '—')}</span>${copyBtn}</div></td>
+        <td style="font-weight:500">${fmt(a.balance)}</td>
+        <td>${currBadge(a.currency)}</td>
+        <td>${statusBadge(a.status)}</td>
+        <td class="mono">${a.settings?.monthlyLimit != null ? fmt(a.settings.monthlyLimit) : '—'}</td>
+        <td>${smsCell}</td>
+        <td><div class="row-actions">
+          <button class="btn btn-sm" onclick="getBalance('${escHtml(a.iban || '')}')">
+            <i class="ti ti-coin" aria-hidden="true"></i>Баланс
+          </button>
+        </div></td>
+      </tr>`;
+    }).join('');
+
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>IBAN</th><th>Баланс</th><th>Валюта</th>
+            <th>Статус</th><th>Лимит</th><th>SMS</th><th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch (e) {
+    wrap.innerHTML = `<div class="alert alert-error" style="margin:16px">
+      <i class="ti ti-alert-circle"></i>${escHtml(e.message)}</div>`;
+  }
+}
+
+async function getBalance(iban) {
+  if (!iban) return;
+  try {
+    const d = await apiFetch('banking', `/accounts/balance?iban=${encodeURIComponent(iban)}`);
+    notify(`${iban.slice(0, 10)}… — ${fmt(d.balance)} ${d.currency}`);
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+async function createAccount() {
+  const balance  = document.getElementById('acc-balance').value;
+  const currency = document.getElementById('acc-currency').value;
+
+  if (!balance || !currency) {
+    notify('Заполните обязательные поля: баланс и валюта', 'error');
+    return;
+  }
+
+  const limit = document.getElementById('acc-limit').value;
+  const sms   = document.getElementById('acc-sms').value === 'true';
+
+  const body = {
+    balance: parseFloat(balance),
+    currency,
+    settings: { smsNotificationsEnabled: sms },
+  };
+  if (limit) body.settings.monthlyLimit = parseFloat(limit);
+
+  try {
+    await apiFetch('banking', '/accounts', { method: 'POST', body: JSON.stringify(body) });
+    notify('Счёт успешно создан');
+    document.getElementById('acc-balance').value  = '';
+    document.getElementById('acc-currency').value = '';
+    document.getElementById('acc-limit').value    = '';
+    document.getElementById('acc-sms').value      = 'false';
+    nav('accounts-list');
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+/* ════════════════════════════════════════════
+   TRANSFERS
+════════════════════════════════════════════ */
+async function performTransfer() {
+  const ibanFrom  = document.getElementById('tr-from').value.trim();
+  const ibanTo    = document.getElementById('tr-to').value.trim();
+  const sentAmount = document.getElementById('tr-amount').value;
+
+  if (ibanFrom.length !== 32 || ibanTo.length !== 32) {
+    notify('IBAN должен быть ровно 32 символа', 'error');
+    return;
+  }
+  if (!sentAmount || parseFloat(sentAmount) <= 0) {
+    notify('Укажите корректную сумму', 'error');
+    return;
+  }
+
+  const resultDiv = document.getElementById('transferResult');
+  resultDiv.innerHTML = '';
+
+  try {
+    const d = await apiFetch('banking', '/transfers', {
+      method: 'POST',
+      body: JSON.stringify({ ibanFrom, ibanTo, sentAmount: parseFloat(sentAmount) }),
+    });
+
+    resultDiv.innerHTML = `
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="ti ti-check" aria-hidden="true"></i>Перевод выполнен
+        </div>
+        <table style="font-size:12px">
+          <tbody>
+            <tr>
+              <td style="color:var(--text-secondary); padding:6px 0; width:180px">Отправитель</td>
+              <td><span class="iban-display">${escHtml(d.ibanFrom)}</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-secondary); padding:6px 0">Баланс отправителя</td>
+              <td><strong>${fmt(d.senderBalance)} ${escHtml(d.senderCurrency || '')}</strong></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-secondary); padding:6px 0">Сумма перевода</td>
+              <td style="font-weight:500">${fmt(d.amount)}</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-secondary); padding:6px 0">Получатель</td>
+              <td><span class="iban-display">${escHtml(d.ibanTo)}</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-secondary); padding:6px 0">Баланс получателя</td>
+              <td><strong>${fmt(d.receiverBalance)} ${escHtml(d.receiverCurrency || '')}</strong></td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-secondary); padding:6px 0">Дата / время</td>
+              <td class="mono">${escHtml(d.dateTime || '—')}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px; padding-top:14px; border-top:0.5px solid var(--border)">
+          <button class="btn btn-sm" onclick="openFavPanel(
+            '${escHtml(d.ibanFrom)}',
+            '${escHtml(d.ibanTo)}',
+            '${escHtml(String(d.amount))}'
+          )">
+            <i class="ti ti-star" aria-hidden="true"></i>Добавить в избранные
+          </button>
+        </div>
+      </div>`;
+    notify('Перевод выполнен');
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="alert alert-error">
+      <i class="ti ti-alert-circle"></i>${escHtml(e.message)}</div>`;
+    notify(e.message, 'error');
+  }
+}
+
+async function loadStatement() {
+  const iban = document.getElementById('st-iban').value.trim();
+  const from = document.getElementById('st-from').value;
+  const to   = document.getElementById('st-to').value;
+
+  if (!iban || !from || !to) {
+    notify('Заполните все поля', 'error');
+    return;
+  }
+
+  const resultDiv = document.getElementById('statementResult');
+  resultDiv.innerHTML = '<div class="empty"><i class="ti ti-loader"></i><div class="empty-text">Загрузка...</div></div>';
+
+  try {
+    const data = await apiFetch(
+      'banking',
+      `/transfers/statement/${encodeURIComponent(iban)}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`
+    );
+
+    if (!data.length) {
+      resultDiv.innerHTML = '<div class="empty"><i class="ti ti-inbox"></i><div class="empty-text">Операций за период нет</div></div>';
+      return;
+    }
+
+    const rows = data.map(t => `
+      <tr>
+        <td class="mono">${escHtml((t.dateTime || '').slice(0, 10))}</td>
+        <td class="mono">${escHtml((t.dateTime || '').slice(11, 16))}</td>
+        <td><span class="iban-display">${escHtml((t.ibanFrom || '').slice(0, 14))}…</span></td>
+        <td><span class="iban-display">${escHtml((t.ibanTo   || '').slice(0, 14))}…</span></td>
+        <td style="font-weight:500">${fmt(t.amount)}</td>
+        <td>${currBadge(t.senderCurrency)}</td>
+      </tr>`).join('');
+
+    resultDiv.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">Операции (${data.length})</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Дата</th><th>Время</th><th>Откуда</th>
+              <th>Куда</th><th>Сумма</th><th>Валюта</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="alert alert-error">
+      <i class="ti ti-alert-circle"></i>${escHtml(e.message)}</div>`;
+  }
+}
+
+/* ════════════════════════════════════════════
+   FAVORITES
+════════════════════════════════════════════ */
+async function loadFavorites() {
+  const wrap = document.getElementById('favoritesTableWrap');
+  wrap.innerHTML = '<div class="empty"><i class="ti ti-loader"></i><div class="empty-text">Загрузка...</div></div>';
+  try {
+    const data = await apiFetch('banking', '/transfers/favorite');
+    if (!data.length) {
+      wrap.innerHTML = '<div class="empty"><i class="ti ti-star"></i><div class="empty-text">Нет избранных переводов</div></div>';
+      return;
+    }
+    const rows = data.map(f => `
+      <tr>
+        <td class="mono">${escHtml(String(f.id))}</td>
+        <td><span class="iban-display">${escHtml(f.ibanFrom || '—')}</span></td>
+        <td><span class="iban-display">${escHtml(f.ibanTo   || '—')}</span></td>
+        <td style="font-weight:500">${fmt(f.amount)}</td>
+        <td>
+          <div class="row-actions">
+            <button class="btn btn-sm btn-primary"
+              onclick="executeFavorite('${escHtml(f.ibanFrom||'')}','${escHtml(f.ibanTo||'')}','${escHtml(String(f.amount))}')">
+              <i class="ti ti-send" aria-hidden="true"></i>Выполнить
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteFavorite(${f.id})">
+              <i class="ti ti-trash" aria-hidden="true"></i>Удалить
+            </button>
+          </div>
+        </td>
+      </tr>`).join('');
+    wrap.innerHTML = `
+      <table>
+        <thead><tr><th>ID</th><th>Откуда</th><th>Куда</th><th>Сумма</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch (e) {
+    wrap.innerHTML = `<div class="alert alert-error" style="margin:16px">
+      <i class="ti ti-alert-circle"></i>${escHtml(e.message)}</div>`;
+  }
+}
+
+function executeFavorite(ibanFrom, ibanTo, amount) {
+  nav('transfers-new');
+  document.getElementById('tr-from').value   = ibanFrom;
+  document.getElementById('tr-to').value     = ibanTo;
+  document.getElementById('tr-amount').value = amount;
+  updateIbanCount('tr-from', 'tr-from-count');
+  updateIbanCount('tr-to',   'tr-to-count');
+  document.getElementById('transferResult').innerHTML = '';
+}
+
+
+function copyIban(iban, btnEl) {
+  navigator.clipboard.writeText(iban).then(() => {
+    btnEl.classList.add('copied');
+    btnEl.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i>';
+    setTimeout(() => {
+      btnEl.classList.remove('copied');
+      btnEl.innerHTML = '<i class="ti ti-copy" aria-hidden="true"></i>';
+    }, 1500);
+  }).catch(() => notify('Не удалось скопировать', 'error'));
+}
+
+function openFavPanel(ibanFrom = '', ibanTo = '', amount = '') {
+  document.getElementById('fav-from').value   = ibanFrom;
+  document.getElementById('fav-to').value     = ibanTo;
+  document.getElementById('fav-amount').value = amount;
+  ['fav-from', 'fav-to'].forEach(id => updateIbanCount(id, id.replace('fav-', 'fav-') + '-c'));
+  updateIbanCount('fav-from', 'fav-from-c');
+  updateIbanCount('fav-to',   'fav-to-c');
+  document.getElementById('favPanel').classList.add('open');
+}
+
+function closeFavPanel() {
+  document.getElementById('favPanel').classList.remove('open');
+}
+
+// Keep old names as aliases so favorites-list button still works
+function openFavModal()  { openFavPanel(); }
+function closeFavModal() { closeFavPanel(); }
+
+async function createFavorite() {
+  const ibanFrom = document.getElementById('fav-from').value.trim();
+  const ibanTo   = document.getElementById('fav-to').value.trim();
+  const amount   = document.getElementById('fav-amount').value;
+
+  if (ibanFrom.length !== 32 || ibanTo.length !== 32) {
+    notify('IBAN должен быть ровно 32 символа', 'error');
+    return;
+  }
+  if (!amount || parseFloat(amount) <= 0) {
+    notify('Укажите корректную сумму', 'error');
+    return;
+  }
+
+  try {
+    await apiFetch('banking', '/transfers/favorite', {
+      method: 'POST',
+      body: JSON.stringify({ ibanFrom, ibanTo, amount: parseFloat(amount) }),
+    });
+    notify('Избранный перевод добавлен');
+    closeFavPanel();
+    if (document.getElementById('section-transfers-favorites').classList.contains('active')) {
+      loadFavorites();
+    }
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+async function deleteFavorite(id) {
+  if (!confirm(`Удалить избранный перевод #${id}?`)) return;
+  try {
+    await apiFetch('banking', '/transfers/favorite/' + id, { method: 'DELETE' });
+    notify('Удалено');
+    loadFavorites();
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+/* ════════════════════════════════════════════
+   CARDS
+════════════════════════════════════════════ */
+async function loadCards() {
+  const wrap = document.getElementById('cardsTableWrap');
+  wrap.innerHTML = '<div class="empty"><i class="ti ti-loader"></i><div class="empty-text">Загрузка...</div></div>';
+  try {
+    const data = await apiFetch('cards', '/cards');
+    if (!data.length) {
+      wrap.innerHTML = '<div class="empty"><i class="ti ti-credit-card"></i><div class="empty-text">Карт нет</div></div>';
+      return;
+    }
+    const rows = data.map(c => `
+      <tr>
+        <td class="mono">${escHtml(String(c.id))}</td>
+        <td class="mono">${escHtml(c.number || '—')}</td>
+        <td>${escHtml(c.holderName || '—')}</td>
+        <td class="mono">${escHtml(c.expirationDate || '—')}</td>
+        <td><span class="iban-display">${escHtml((c.iban || '—').slice(0, 14))}…</span></td>
+        <td>${statusBadge(c.status)}</td>
+        <td>
+          <div class="row-actions">
+            <button class="btn btn-sm"
+              onclick="openCardStatusModal(${c.id}, '${escHtml(c.number || '')}')">
+              <i class="ti ti-edit" aria-hidden="true"></i>Статус
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCard(${c.id})">
+              <i class="ti ti-trash" aria-hidden="true"></i>Удалить
+            </button>
+          </div>
+        </td>
+      </tr>`).join('');
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Номер</th><th>Держатель</th>
+            <th>Истекает</th><th>IBAN</th><th>Статус</th><th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch (e) {
+    wrap.innerHTML = `<div class="alert alert-error" style="margin:16px">
+      <i class="ti ti-alert-circle"></i>${escHtml(e.message)}</div>`;
+  }
+}
+
+async function createCard() {
+  const holderName = document.getElementById('card-holder').value.trim();
+  const iban       = document.getElementById('card-iban').value.trim();
+
+  if (!holderName) {
+    notify('Укажите имя держателя', 'error');
+    return;
+  }
+  if (iban.length !== 32) {
+    notify('IBAN должен быть ровно 32 символа', 'error');
+    return;
+  }
+
+  try {
+    await apiFetch('cards', '/cards', {
+      method: 'POST',
+      body: JSON.stringify({ holderName, iban }),
+    });
+    notify('Карта выпущена');
+    document.getElementById('card-holder').value = '';
+    document.getElementById('card-iban').value   = '';
+    document.getElementById('card-iban-count').textContent = '0/32';
+    document.getElementById('card-iban-count').classList.remove('ok');
+    nav('cards-list');
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+function openCardStatusModal(id, number) {
+  pendingCardId = id;
+  document.getElementById('cs-id').textContent  = id;
+  document.getElementById('cs-num').value       = number;
+  document.getElementById('cardStatusModal').classList.add('open');
+}
+
+function closeCardStatusModal() {
+  document.getElementById('cardStatusModal').classList.remove('open');
+  pendingCardId = null;
+}
+
+async function changeCardStatus() {
+  const status = document.getElementById('cs-status').value;
+  try {
+    await apiFetch('cards', '/cards/' + pendingCardId + '/status', {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+    notify('Статус карты обновлён');
+    closeCardStatusModal();
+    loadCards();
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+async function deleteCard(id) {
+  if (!confirm(`Удалить карту #${id}?`)) return;
+  try {
+    await apiFetch('cards', '/cards/' + id, { method: 'DELETE' });
+    notify('Карта удалена');
+    loadCards();
+  } catch (e) {
+    notify(e.message, 'error');
+  }
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+
+const DEFAULT_BANKING = 'http://172.20.10.8:8081';
+const DEFAULT_CARDS   = 'http://172.20.10.8:8080';
+
+let BASE_BANKING = DEFAULT_BANKING;
+let BASE_CARDS   = DEFAULT_CARDS;
+
+const bankingInput = document.getElementById('baseBankingInput');
+const cardsInput = document.getElementById('baseCardsInput');
+
+if (bankingInput) {
+  bankingInput.value = DEFAULT_BANKING;
+  BASE_BANKING = DEFAULT_BANKING;
+}
+if (cardsInput) {
+  cardsInput.value = DEFAULT_CARDS;
+  BASE_CARDS = DEFAULT_CARDS;
+}
+
+loadAccounts();
+</script>
+</body>
+</html>

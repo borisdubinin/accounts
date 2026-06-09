@@ -5,3 +5,7 @@ databaseChangeLog:
       file: db/changelog/002-create-currency-rates.yaml
   - include:
       file: db/changelog/003-create-account-settings.yaml
+  - include:
+      file: db/changelog/004-create-transfers.yaml
+  - include:
+      file: db/changelog/005-create-favorite-transfers.yaml

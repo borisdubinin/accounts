@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.example.model.AccountCurrency;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,4 +32,7 @@ public class TransferResponseDto {
 
     @Schema(description = "Account currency of the account to which money was sent")
     private AccountCurrency receiverCurrency;
+
+    @Schema(description = "Date and time of the transfer")
+    private LocalDateTime dateTime;
 }

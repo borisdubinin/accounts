@@ -10,6 +10,8 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+  profiles:
+    active: dev
 
 national-bank-client:
   url: https://api.nbrb.by
